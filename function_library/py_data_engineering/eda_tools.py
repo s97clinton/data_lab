@@ -1,6 +1,6 @@
 import pandas as pd
 
-def basic_dataframe_description(df: pd.DataFrame, descriptive_name: str, transpose_description: bool = False) -> pd.DataFrame:
+def basic_dataframe_description(df: pd.DataFrame, descriptive_name: str = None, transpose_description: bool = False) -> pd.DataFrame:
     """
     Function:
     - Prints a basic overview of a Pandas Dataframe, including the shape, columns, memory usage,
@@ -9,12 +9,14 @@ def basic_dataframe_description(df: pd.DataFrame, descriptive_name: str, transpo
 
     Parameters:
     <df> (Pandas DataFrame): The DataFrame to be described.
-    <descriptive_name> (str): A descriptive name for the DataFrame to be used in print statements.
+    <descriptive_name> (str, optional): A descriptive name for the DataFrame to be used in print statements.
     <transpose_description> (bool): Whether to transpose the output of df.describe(). Default is False.
 
     Returns:
     <df.describe()> (Pandas DataFrame): The output of the DataFrame's describe() method.
     """
+    if descriptive_name is None:
+        descriptive_name = 'df'
     if df.empty:
         print(f"The DataFrame '{descriptive_name}' is empty.")
         return
