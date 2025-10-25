@@ -205,3 +205,16 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# CSV/Numbers Files
+*.csv
+*.numbers
+
+# DS_Store files
+.DS_Store
+
+# Text Files
+*.txt
+
+# Solo Files
+credentials.py
