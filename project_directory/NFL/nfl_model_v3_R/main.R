@@ -1,4 +1,4 @@
-setwd("~/Documents/_sjc_repo_/predictive_modeling_r/nfl_model_v3_R")
+setwd("~/Documents/_sjc_repo_/data_lab/project_directory/NFL/nfl_model_v3_R")
 
 source("functions/import_functions.R")
 source("functions/run_multinomial_log_reg_model.R")
