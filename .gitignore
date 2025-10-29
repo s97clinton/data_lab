@@ -218,6 +218,7 @@ __marimo__/
 
 # Solo Files
 credentials.py
+credentials.R
 
 # R Related Files
 *.Rhistory
