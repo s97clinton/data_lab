@@ -1,4 +1,3 @@
-import os
 import pandas as pd
 from functions.utils import create_nfl_engine
 
@@ -94,7 +93,7 @@ def import_coach_qb(start_season: int, current_season: int) -> pd.DataFrame:
 
     return coach_qb_df
 
-def import_pfr_game_basic(start_season: int, end_season: int) -> pd.DataFrame:
+def import_game_basic(start_season: int, end_season: int) -> pd.DataFrame:
     """
     Function:
     -Import the data in the MySQL pfr_game_basic table for the
@@ -122,7 +121,7 @@ def import_pfr_game_basic(start_season: int, end_season: int) -> pd.DataFrame:
 
     return pfr_game_basic, pfr_game_ids
 
-def import_pfr_team_stats(pfr_game_ids: list) -> pd.DataFrame:
+def import_team_stats(pfr_game_ids: list) -> pd.DataFrame:
     """
     Function:
     -Import the data in the MySQL pfr_team_stats table for the
@@ -152,7 +151,7 @@ def import_pfr_team_stats(pfr_game_ids: list) -> pd.DataFrame:
 
     return pfr_team_stats
 
-def import_pfr_pass_df(pfr_game_ids: list) -> pd.DataFrame:
+def import_pass_df(pfr_game_ids: list) -> pd.DataFrame:
     """
     Function:
     -Import the data in the MySQL pfrpassingbase table for the
@@ -182,7 +181,7 @@ def import_pfr_pass_df(pfr_game_ids: list) -> pd.DataFrame:
 
     return pfr_pass_df
 
-def import_pfr_pass_adv(pfr_game_ids: list) -> pd.DataFrame:
+def import_pass_adv(pfr_game_ids: list) -> pd.DataFrame:
     """
     Function:
     -Import the data in the MySQL pfrpassingadv table for the
@@ -212,7 +211,7 @@ def import_pfr_pass_adv(pfr_game_ids: list) -> pd.DataFrame:
 
     return pfr_pass_adv
 
-def import_pfr_rush_df(pfr_game_ids: list) -> pd.DataFrame:
+def import_rush_df(pfr_game_ids: list) -> pd.DataFrame:
     """
     Function:
     -Import the data in the MySQL pfr_rushing_base table for the
@@ -242,7 +241,7 @@ def import_pfr_rush_df(pfr_game_ids: list) -> pd.DataFrame:
 
     return pfr_rush_df
 
-def import_pfr_rush_adv(pfr_game_ids: list) -> pd.DataFrame:
+def import_rush_adv(pfr_game_ids: list) -> pd.DataFrame:
     """
     Function:
     -Import the data in the MySQL pfr_rushing_adv table for the
@@ -272,7 +271,7 @@ def import_pfr_rush_adv(pfr_game_ids: list) -> pd.DataFrame:
 
     return pfr_rush_adv
 
-def import_pfr_rec_df(pfr_game_ids: list) -> pd.DataFrame:
+def import_rec_df(pfr_game_ids: list) -> pd.DataFrame:
     """
     Function:
     -Import the data in the MySQL pfr_receiving_base table for the
@@ -302,7 +301,7 @@ def import_pfr_rec_df(pfr_game_ids: list) -> pd.DataFrame:
 
     return pfr_rec_df
 
-def import_pfr_rec_adv(pfr_game_ids: list) -> pd.DataFrame:
+def import_rec_adv(pfr_game_ids: list) -> pd.DataFrame:
     """
     Function:
     -Import the data in the MySQL pfr_receiving_adv table for the
@@ -332,7 +331,7 @@ def import_pfr_rec_adv(pfr_game_ids: list) -> pd.DataFrame:
 
     return pfr_rec_adv
 
-def import_pfr_drive_info(start_season: int, end_season: int) -> pd.DataFrame:
+def import_drive_info(start_season: int, end_season: int) -> pd.DataFrame:
     """
     Function:
     -Import the data in the MySQL pfr_drive_info table for the
@@ -356,6 +355,3 @@ def import_pfr_drive_info(start_season: int, end_season: int) -> pd.DataFrame:
     pfr_drive_info = pd.read_sql(query, nfl_engine)
 
     return pfr_drive_info
-
-
-
