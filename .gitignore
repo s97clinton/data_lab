@@ -216,8 +216,9 @@ __marimo__/
 # Text Files
 *.txt
 
-# Solo Files
+# Credentials Files
 credentials.py
+credentials.R
 
 # R Related Files
 *.Rhistory
