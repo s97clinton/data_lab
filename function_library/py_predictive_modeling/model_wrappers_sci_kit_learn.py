@@ -6,7 +6,15 @@ from sklearn.metrics import classification_report, log_loss
 import pandas as pd
 
 
-def multinomial_logistic_regression(train_set, test_set, features, target, one_hot_features=None, ordinal_features=None, solver='lbfgs', max_iter=1000, test_set_target=False):
+def multinomial_logistic_regression(train_set: pd.DataFrame, 
+                                    test_set: pd.DataFrame, 
+                                    target: list,
+                                    features: list,
+                                    one_hot_features: list = None, 
+                                    ordinal_features: list = None, 
+                                    solver: str = 'lbfgs', 
+                                    max_iter: int = 1000, 
+                                    test_set_target: bool = False) -> tuple:
     """
     Function:
     -This function will use sklearn to train a multinomial logistic regression model on the <train_set> before
