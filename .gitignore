@@ -213,9 +213,6 @@ __marimo__/
 # DS_Store files
 .DS_Store
 
-# Text Files
-*.txt
-
 # Credentials Files
 credentials.py
 credentials.R

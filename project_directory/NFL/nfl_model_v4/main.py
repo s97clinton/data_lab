@@ -8,6 +8,7 @@ from datetime import datetime
 import nfl_data_py as nfl
 
 from functions.data_transformation import prep_nfl_data_py_pbp
+from functions.feature_engineering import create_features_nfl_data_py
 from function_library.py_predictive_modeling.model_wrappers_sci_kit_learn import multinomial_logistic_regression
 
 def nfl_model_v4(seasons: list[int]):
@@ -21,9 +22,11 @@ def nfl_model_v4(seasons: list[int]):
     Returns:
     <pbp_df> (DataFrame): Temporary return to verify initial data load is working.
     """
-    pbp_df = nfl.import_pbp_data(years = seasons)
+    df = nfl.import_pbp_data(years = seasons)
+    pbp_df = df.copy()
     pbp_df = prep_nfl_data_py_pbp(pbp_df)
-
+    pbp_df = create_features_nfl_data_py(pbp_df)
+    # drive_df = df.copy()
     return pbp_df
 
 
@@ -33,3 +36,4 @@ if __name__ == "__main__":
     pbp_df.to_csv("check_pbp.csv", index=False)
     model_end_time = datetime.now()
     print(f"The model run time came in at {model_end_time - model_start_time}")
+    

@@ -28,7 +28,21 @@ def load_nfl_team_map(nfl_team_map: dict = nfl_team_map) -> dict:
     
     return nfl_team_map
 
-def calculate_generic_yardline(df, possession_field, yardline_field):
+def calculate_generic_yardline(df: pd.DataFrame, possession_field: str, yardline_field: str) -> pd.DataFrame:
+    """
+    Function:
+    -Takes a <yardline_field> column with the standard 'Team 50' yardline coding and converts
+    the value to a 0-100 scale where the "0" and "100" denote the "own endline" and "opponent endline"
+    for the team in the <possession_field>.
+
+    Parameters:
+    <df> (Pandas DataFrame): DataFrame of NFL pbp_data containing the <possession_field> and <yardline_field>.
+    <possession_field> (str): String denoting the column name for the <possession_field>.
+    <yardline_field> (str): String denoting the column name for the <yardline_field>.
+
+    Returns:
+    <df> (Pandas DataFrame): Updated DataFrame.
+    """
     def calculate_yardline(row):
         possession_team = row[possession_field]
         yardline_value = row[yardline_field]
@@ -39,13 +53,8 @@ def calculate_generic_yardline(df, possession_field, yardline_field):
             return int(yardline_value.split()[-1])
         else:
             return 100 - int(yardline_value.split()[-1])
-    
-    if yardline_field == 'drive_end_yard_line':
-        df['drive_end_yard_line'] = df.apply(calculate_yardline, axis=1)
-        df['drive_end_yard_line'] = df['drive_end_yard_line'].astype('float')        
-    else: ## for general cases like drive_start_yard_line
-        df['yardline'] = df.apply(calculate_yardline, axis=1)
-        df['yardline'] = df['yardline'].astype('float')
+        
+    df[yardline_field] = df.apply(calculate_yardline, axis=1).astype('float')
     
     return df
 
