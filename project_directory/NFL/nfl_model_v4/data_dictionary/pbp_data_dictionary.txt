@@ -1,0 +1,428 @@
+Game Information
+
+game_id                               : Ten digit identifier for NFL game.
+old_game_id                           : Legacy NFL game ID.
+home_team                             : String abbreviation for the home team.
+away_team                             : String abbreviation for the away team.
+season_type                           : 'REG' or 'POST' indicating if the game belongs to regular or post season.
+week                                  : Season week.
+season                                : 4 digit number indicating to which season the game belongs to.
+game_date                             : Date of the game.
+start_time                            : Kickoff time in eastern time zone.
+stadium                               : Game site name.
+stadium_id                            : ID of the stadium the game was played in. (Source: Pro-Football-Reference)
+game_stadium                          : Name of the stadium the game was played in. (Source: Pro-Football-Reference)
+location                              : Either 'Home' or 'Neutral' indicating if the home team played at home or at a neutral site.
+div_game                              : Binary indicator for if the given game was a division game.
+roof                                  : One of 'dome', 'outdoors', 'closed', 'open' indicating the roof status of the stadium the game was played in. (Source: Pro-Football-Reference)
+surface                               : What type of ground the game was played on. (Source: Pro-Football-Reference)
+temp                                  : The temperature at the stadium only for 'roof' = 'outdoors' or 'open'. (Source: Pro-Football-Reference)
+wind                                  : The speed of the wind in miles/hour only for 'roof' = 'outdoors' or 'open'. (Source: Pro-Football-Reference)
+home_coach                            : First and last name of the home team coach. (Source: Pro-Football-Reference)
+away_coach                            : First and last name of the away team coach. (Source: Pro-Football-Reference)
+weather                               : Weather conditions during the game. (e.g., Clear, 75°F)
+
+
+Score Information
+
+total_home_score                      : Score for the home team at the end of the play.
+total_away_score                      : Score for the away team at the end of the play.
+posteam_score                         : Score the posteam at the start of the play.
+defteam_score                         : Score the defteam at the start of the play.
+score_differential                    : Score differential between the posteam and defteam at the start of the play.
+posteam_score_post                    : Score for the posteam at the end of the play.
+defteam_score_post                    : Score for the defteam at the end of the play.
+score_differential_post               : Score differential between the posteam and defteam at the end of the play.
+away_score                            : Total points scored by the away team.
+home_score                            : Total points scored by the home team.
+result                                : Equals home_score - away_score and means the game outcome from the perspective of the home team.
+total                                 : Equals home_score + away_score and means the total points scored in the given game.
+spread_line                           : The closing spread line for the game. A positive number means the home team was favored by that many points, a negative number means the away team was favored by that many points. (Source: Pro-Football-Reference)
+total_line                            : The closing total line for the game. (Source: Pro-Football-Reference)
+
+
+Play Information
+
+play_id                               : Numeric play id that when used with game_id and drive provides the unique identifier for a single play.
+drive                                  : Numeric drive number in the game.
+play_type                             : String indicating the type of play: pass (includes sacks), run (includes scrambles), punt, field_goal, kickoff, extra_point, qb_kneel, qb_spike, no_play (timeouts and penalties), and missing for rows indicating end of play.
+desc                                  : Detailed string description for the given play.
+time                                  : Time at start of play provided in string format as minutes:seconds remaining in the quarter.
+end_clock_time                        : Game time at the end of a given play.
+end_yard_line                         : String indicating the yardline at the end of the given play consisting of team half and yard line number.
+down                                  : Down of the play (e.g., 3 for third down).
+yrdln                                 : String indicating the current field position for a given play.
+ydstogo                               : Numeric yards in distance from either the first down marker or the endzone in goal down situations.
+ydsnet                                : Net yards gained on the drive. (e.g., 75)
+yardline_100                          : Numeric distance in the number of yards from the opponent’s endzone for the posteam.
+yards_gained                          : Numeric yards gained (or lost) by the possessing team, excluding yards gained via fumble recoveries and laterals.
+quarter_seconds_remaining             : Numeric seconds remaining in the quarter.
+half_seconds_remaining                : Numeric seconds remaining in the half.
+game_seconds_remaining                : Numeric seconds remaining in the game.
+game_half                             : String indicating which half the play is in, either Half1, Half2, or Overtime.
+quarter_end                           : Binary indicator for whether or not the row of the data is marking the end of a quarter.
+drive_play_count                      : Numeric value of how many regular plays happened in a given drive.
+drive_time_of_possession              : Time of possession in a given drive.
+drive_first_downs                     : Number of first downs in a given drive.
+drive_inside20                        : Binary indicator if the offense was able to get inside the opponents 20 yard line.
+drive_ended_with_score                : Binary indicator the drive ended with a score.
+drive_quarter_start                   : Numeric value indicating in which quarter the given drive has started.
+drive_quarter_end                     : Numeric value indicating in which quarter the given drive has ended.
+drive_yards_penalized                 : Numeric value of how many yards the offense gained or lost through penalties in the given drive.
+drive_start_transition                : String indicating how the offense got the ball.
+drive_end_transition                  : String indicating how the offense lost the ball.
+drive_game_clock_start                : Game time at the beginning of a given drive.
+drive_game_clock_end                  : Game time at the end of a given drive.
+drive_start_yard_line                 : String indicating where a given drive started consisting of team half and yard line number.
+drive_end_yard_line                   : String indicating where a given drive ended consisting of team half and yard line number.
+drive_play_id_started                 : Play_id of the first play in the given drive.
+drive_play_id_ended                   : Play_id of the last play in the given drive.
+fixed_drive                           : Manually created drive number in a game.
+fixed_drive_result                    : Manually created drive result.
+extra_point_result                    : Result of an extra point attempt (e.g., good, no good).
+two_point_conv_result                 : Result of a two-point conversion attempt (e.g., success, failure).
+field_goal_result                     : Result of a field goal attempt (e.g., made, missed).
+qb_dropback                           : Indicator if the QB dropped back to pass (e.g., 1 for yes, 0 for no).
+qb_kneel                              : Indicator if the QB kneeled to end the play (e.g., 1 for yes, 0 for no).
+qb_spike                              : Indicator if the QB spiked the ball to stop the clock (e.g., 1 for yes, 0 for no).
+qb_scramble                           : Indicator if the QB scrambled during the play (e.g., 1 for yes, 0 for no).
+qtr                                   : Quarter in which the play occurred. (e.g., 4)
+sp                                    : Special play indicator. (e.g., 1 for yes, 0 for no)
+td_team                               : Team that scored the touchdown. (e.g., TB for Tampa Bay Buccaneers)
+timeout                               : Indicator if a timeout was called during the play. (e.g., 1 for yes, 0 for no)
+first_down                            : Binary indicator for whether the play resulted in a first down.
+fumble                                : Binary indicator for whether a fumble occurred during the play.
+goal_to_go                            : Binary indicator for whether the posteam is in a goal-to-go situation.
+out_of_bounds                         : Binary indicator for whether the play resulted in the ball or player going out of bounds.
+pass                                  : Binary indicator for whether the play was a passing play.
+rush                                  : Binary indicator for whether the play was a rushing play.
+play                                  : Binary indicator if it was a normal play (excluding special plays)
+special                               : Binary indicator for whether the play was a special teams play.
+success                               : Binary indicator for whether the play was considered successful based on specific criteria (e.g., gaining a certain number of yards or achieving a first down).
+
+
+Team Information
+
+posteam                               : String abbreviation for the team with possession.
+posteam_type                          : String indicating whether the posteam is home or away.
+defteam                               : String abbreviation for the team on defense.
+side_of_field                         : String abbreviation for which team’s side of the field the team with possession is currently on.
+return_team                           : String abbreviation of the return team.
+penalty_team                          : String abbreviation of the team with the penalty.
+timeout_team                          : String abbreviation for which team called the timeout.
+forced_fumble_player_1_team           : Team of one of the players with a forced fumble.
+forced_fumble_player_2_team           : Team of one of the players with a forced fumble.
+solo_tackle_1_team                    : Team of one of the players with a solo tackle.
+solo_tackle_2_team                    : Team of one of the players with a solo tackle.
+assist_tackle_1_team                  : Team of one of the players with a tackle assist.
+assist_tackle_2_team                  : Team of one of the players with a tackle assist.
+assist_tackle_3_team                  : Team of one of the players with a tackle assist.
+assist_tackle_4_team                  : Team of one of the players with a tackle assist.
+fumbled_1_team                        : Team of one of the first players with a fumble.
+fumbled_2_team                        : Team of one of the second players with a fumble.
+fumble_recovery_1_team                : Team of one of the players with a fumble recovery.
+fumble_recovery_2_team                : Team of one of the players with a fumble recovery.
+posteam_timeouts_remaining            : Number of timeouts remaining for the possession team.
+defteam_timeouts_remaining            : Number of timeouts remaining for the team on defense.
+n_defense                             : Numeric value indicating the number of defensive players on the field during the play.
+n_offense                             : Numeric value indicating the number of offensive players on the field during the play.
+number_of_pass_rushers                : Numeric value indicating the number of defensive players rushing the passer on the play.
+offense_formation                     : String indicating the offensive formation used during the play (e.g., Shotgun, Singleback, I-Formation).
+offense_personnel                     : String describing the offensive personnel grouping (e.g. 1 RB, 2 TE, 2 WR)
+offense_players                       : List of gsis_id's / nfl_data_py id's of offensive players on the field during the play.
+players_on_play                       : List or string identifying the players involved in the play, typically including both offensive and defensive players.
+possession_team                       : String abbreviation for the team that had possession of the ball during the play.
+shotgun                               : Indicator if the play was executed from the shotgun formation (e.g., 1 for yes, 0 for no).
+defenders_in_box                      : Number of defenders in the box on the play. (e.g., 7)
+defense_personnel                     : Personnel package used by the defense on the play. (e.g., 4-3, Nickel)
+defense_man_zone_type                 : Type of defensive coverage (e.g., man, zone).
+defense_coverage_type                 : Specific coverage used by the defense (e.g., Cover 2, Cover 3).
+defense_players                       : Number of defensive players on the field during the play. (e.g., 11)
+
+
+Player Information
+
+td_player_name                        : String name of the player who scored a touchdown.
+td_player_id                          : Unique identifier of the player who scored a touchdown.
+passer_player_id                      : Unique identifier for the player that attempted the pass.
+passer_player_name                    : String name for the player that attempted the pass.
+passing_yards                         : Numeric yards by the passer_player_name, including yards gained in pass plays with laterals. This should equal official passing statistics.
+receiver_player_id                    : Unique identifier for the receiver that was targeted on the pass.
+receiver_player_name                  : String name for the targeted receiver.
+receiving_yards                       : Numeric yards by the receiver_player_name, excluding yards gained in pass plays with laterals.
+rusher_player_id                      : Unique identifier for the player that attempted the run.
+rusher_player_name                    : String name for the player that attempted the run.
+rushing_yards                         : Numeric yards by the rusher_player_name, excluding yards gained in rush plays with laterals.
+lateral_receiver_player_id            : Unique identifier for the player that received the last(!) lateral on a pass play.
+lateral_receiver_player_name          : String name for the player that received the last(!) lateral on a pass play.
+lateral_receiving_yards               : Numeric yards by the lateral_receiver_player_name in pass plays with laterals.
+lateral_rusher_player_id              : Unique identifier for the player that received the last(!) lateral on a run play.
+lateral_rusher_player_name            : String name for the player that received the last(!) lateral on a run play.
+lateral_rushing_yards                 : Numeric yards by the lateral_rusher_player_name in run plays with laterals.
+lateral_sack_player_id                : Unique identifier for the player that received the lateral on a sack.
+lateral_sack_player_name              : String name for the player that received the lateral on a sack.
+interception_player_id                : Unique identifier for the player that intercepted the pass.
+interception_player_name              : String name for the player that intercepted the pass.
+lateral_interception_player_id        : Unique identifier for the player that received the lateral on an interception.
+lateral_interception_player_name      : String name for the player that received the lateral on an interception.
+punt_returner_player_id               : Unique identifier for the punt returner.
+punt_returner_player_name             : String name for the punt returner.
+lateral_punt_returner_player_id       : Unique identifier for the player that received the lateral on a punt return.
+lateral_punt_returner_player_name     : String name for the player that received the lateral on a punt return.
+kickoff_returner_player_name          : String name for the kickoff returner.
+kickoff_returner_player_id            : Unique identifier for the kickoff returner.
+lateral_kickoff_returner_player_id    : Unique identifier for the player that received the lateral on a kickoff return.
+lateral_kickoff_returner_player_name  : String name for the player that received the lateral on a kickoff return.
+punter_player_id                      : Unique identifier for the punter.
+punter_player_name                    : String name for the punter.
+kicker_player_name                    : String name for the kicker on FG or kickoff.
+kicker_player_id                      : Unique identifier for the kicker on FG or kickoff.
+own_kickoff_recovery_player_id        : Unique identifier for the player that recovered their own kickoff.
+own_kickoff_recovery_player_name      : String name for the player that recovered their own kickoff.
+blocked_player_id                     : Unique identifier for the player that blocked the punt or FG.
+blocked_player_name                   : String name for the player that blocked the punt or FG.
+tackle_for_loss_1_player_id           : Unique identifier for one of the potential players with the tackle for loss.
+tackle_for_loss_1_player_name         : String name for one of the potential players with the tackle for loss.
+tackle_for_loss_2_player_id           : Unique identifier for one of the potential players with the tackle for loss.
+tackle_for_loss_2_player_name         : String name for one of the potential players with the tackle for loss.
+qb_hit_1_player_id                    : Unique identifier for one of the potential players that hit the QB. No sack as the QB was not the ball carrier. For sacks please see sack_player or half_sack_*_player.
+qb_hit_1_player_name                  : String name for one of the potential players that hit the QB. No sack as the QB was not the ball carrier. For sacks please see sack_player or half_sack_*_player.
+qb_hit_2_player_id                    : Unique identifier for one of the potential players that hit the QB. No sack as the QB was not the ball carrier. For sacks please see sack_player or half_sack_*_player.
+qb_hit_2_player_name                  : String name for one of the potential players that hit the QB. No sack as the QB was not the ball carrier. For sacks please see sack_player or half_sack_*_player.
+fumbled_1_player_id                   : Unique identifier of the first player who fumbled on the play.
+fumbled_1_player_name                 : String name of one of the first player who fumbled on the play.
+fumbled_2_player_id                   : Unique identifier of the second player who fumbled on the play.
+fumbled_2_player_name                 : String name of one of the second player who fumbled on the play.
+fumble_recovery_1_player_id           : Unique identifier of one of the players with a fumble recovery.
+fumble_recovery_1_player_name         : String name of one of the players with a fumble recovery.
+fumble_recovery_2_player_id           : Unique identifier of one of the players with a fumble recovery.
+fumble_recovery_2_player_name         : String name of one of the players with a fumble recovery.
+sack_player_id                        : Unique identifier of the player who recorded a solo sack.
+sack_player_name                      : String name of the player who recorded a solo sack.
+half_sack_1_player_id                 : Unique identifier of the first player who recorded half a sack.
+half_sack_1_player_name               : String name of the first player who recorded half a sack.
+half_sack_2_player_id                 : Unique identifier of the second player who recorded half a sack.
+half_sack_2_player_name               : String name of the second player who recorded half a sack.
+safety_player_name                    : String name for the player who scored a safety.
+safety_player_id                      : Unique identifier for the player who scored a safety.
+penalty_player_id                     : Unique identifier for the player with the penalty.
+penalty_player_name                   : String name for the player with the penalty.
+forced_fumble_player_1_player_id      : Unique identifier for the first player who forced a fumble during the play.
+forced_fumble_player_1_player_name    : Name of the first player who forced a fumble during the play.
+forced_fumble_player_2_player_id      : Unique identifier for the second player who forced a fumble during the play.
+forced_fumble_player_2_player_name    : Name of the second player who forced a fumble during the play.
+name                                  : Name of the player involved in the play.
+jersey_number                         : Jersey number of the player involved in the play.
+pass_defense_1_player_id              : Unique identifier for the first player credited with a pass defense during the play.
+pass_defense_1_player_name            : Name of the first player credited with a pass defense during the play.
+pass_defense_2_player_id              : Unique identifier for the second player credited with a pass defense during the play.
+pass_defense_2_player_name            : Name of the second player credited with a pass defense during the play.
+passer                                : Name of the player who attempted the pass during the play.
+passer_id                             : Unique identifier for the player who attempted the pass during the play.
+passer_jersey_number                  : Jersey number of the player who attempted the pass during the play.
+receiver                              : Name of the player who was targeted as the receiver during the play.
+receiver_id                           : Unique identifier for the player who was targeted as the receiver during the play.
+receiver_jersey_number                : Jersey number of the player who was targeted as the receiver during the play.
+rusher                                : Name of the player who attempted the rush during the play.
+rusher_id                             : Unique identifier for the player who attempted the rush during the play.
+rusher_jersey_number                  : Jersey number of the player who attempted the rush during the play.
+solo_tackle                           : Binary indicator for whether a solo tackle was made during the play.
+solo_tackle_1_player_id               : Unique identifier for the first player who made a solo tackle during the play.
+solo_tackle_1_player_name             : Name of the first player who made a solo tackle during the play.
+solo_tackle_2_player_id               : Unique identifier for the second player who made a solo tackle during the play.
+solo_tackle_2_player_name             : Name of the second player who made a solo tackle during the play.
+tackle_with_assist_1_player_id        : Unique identifier for the first player who assisted in a tackle during the play.
+tackle_with_assist_1_player_name      : Name of the first player who assisted in a tackle during the play.
+tackle_with_assist_1_team             : Team of the first player who assisted in a tackle during the play.
+tackle_with_assist_2_player_id        : Unique identifier for the second player who assisted in a tackle during the play.
+tackle_with_assist_2_player_name      : Name of the second player who assisted in a tackle during the play.
+tackle_with_assist_2_team             : Team of the second player who assisted in a tackle during the play.
+
+
+
+Probability and Expected Points Information
+
+no_score_prob                         : Predicted probability of no score occurring for the rest of the half based on the expected points model.
+opp_fg_prob                           : Predicted probability of the defteam scoring a FG next.
+opp_safety_prob                       : Predicted probability of the defteam scoring a safety next.
+opp_td_prob                           : Predicted probability of the defteam scoring a TD next.
+fg_prob                               : Predicted probability of the posteam scoring a FG next.
+safety_prob                           : Predicted probability of the posteam scoring a safety next.
+td_prob                               : Predicted probability of the posteam scoring a TD next.
+extra_point_prob                      : Predicted probability of the posteam scoring an extra point.
+two_point_conversion_prob             : Predicted probability of the posteam scoring the two point conversion.
+ep                                    : Using the scoring event probabilities, the estimated expected points with respect to the possession team for the given play.
+epa                                   : Expected points added (EPA) by the posteam for the given play.
+total_home_epa                        : Cumulative total EPA for the home team in the game so far.
+total_away_epa                        : Cumulative total EPA for the away team in the game so far.
+total_home_rush_epa                   : Cumulative total rushing EPA for the home team in the game so far.
+total_away_rush_epa                   : Cumulative total rushing EPA for the away team in the game so far.
+total_home_pass_epa                   : Cumulative total passing EPA for the home team in the game so far.
+total_away_pass_epa                   : Cumulative total passing EPA for the away team in the game so far.
+air_epa                               : EPA from the air yards alone. For completions this represents the actual value provided through the air. For incompletions this represents the hypothetical value that could’ve been added through the air if the pass was completed.
+yac_epa                               : EPA from the yards after catch alone. For completions this represents the actual value provided after the catch. For incompletions this represents the difference between the hypothetical air_epa and the play’s raw observed EPA (how much the incomplete pass cost the posteam).
+comp_air_epa                          : EPA from the air yards alone only for completions.
+comp_yac_epa                          : EPA from the yards after catch alone only for completions.
+total_home_comp_air_epa               : Cumulative total completions air EPA for the home team in the game so far.
+total_away_comp_air_epa               : Cumulative total completions air EPA for the away team in the game so far.
+total_home_comp_yac_epa               : Cumulative total completions yac EPA for the home team in the game so far.
+total_away_comp_yac_epa               : Cumulative total completions yac EPA for the away team in the game so far.
+total_home_raw_air_epa                : Cumulative total raw air EPA for the home team in the game so far.
+total_away_raw_air_epa                : Cumulative total raw air EPA for the away team in the game so far.
+total_home_raw_yac_epa                : Cumulative total raw yac EPA for the home team in the game so far.
+total_away_raw_yac_epa                : Cumulative total raw yac EPA for the away team in the game so far.
+wp                                    : Estimated win probability for the posteam given the current situation at the start of the given play.
+def_wp                                : Estimated win probability for the defteam.
+home_wp                               : Estimated win probability for the home team.
+away_wp                               : Estimated win probability for the away team.
+wpa                                   : Win probability added (WPA) for the posteam.
+vegas_wpa                             : Win probability added (WPA) for the posteam: spread_adjusted model.
+vegas_home_wpa                        : Win probability added (WPA) for the home team: spread_adjusted model.
+home_wp_post                          : Estimated win probability for the home team at the end of the play.
+away_wp_post                          : Estimated win probability for the away team at the end of the play.
+vegas_wp                              : Estimated win probability for the posteam given the current situation at the start of the given play, incorporating pre-game Vegas line.
+vegas_home_wp                         : Estimated win probability for the home team incorporating pre-game Vegas line.
+total_home_rush_wpa                   : Cumulative total rushing WPA for the home team in the game so far.
+total_away_rush_wpa                   : Cumulative total rushing WPA for the away team in the game so far.
+total_home_pass_wpa                   : Cumulative total passing WPA for the home team in the game so far.
+total_away_pass_wpa                   : Cumulative total passing WPA for the away team in the game so far.
+air_wpa                               : WPA through the air (same logic as air_epa).
+yac_wpa                               : WPA from yards after the catch (same logic as yac_epa).
+comp_air_wpa                          : The air_wpa for completions only.
+comp_yac_wpa                          : The yac_wpa for completions only.
+total_home_comp_air_wpa               : Cumulative total completions air WPA for the home team in the game so far.
+total_away_comp_air_wpa               : Cumulative total completions air WPA for the away team in the game so far.
+total_home_comp_yac_wpa               : Cumulative total completions yac WPA for the home team in the game so far.
+total_away_comp_yac_wpa               : Cumulative total completions yac WPA for the away team in the game so far.
+total_home_raw_air_wpa                : Cumulative total raw air WPA for the home team in the game so far.
+total_away_raw_air_wpa                : Cumulative total raw air WPA for the away team in the game so far.
+total_home_raw_yac_wpa                : Cumulative total raw yac WPA for the home team in the game so far.
+total_away_raw_yac_wpa                : Cumulative total raw yac WPA for the away team in the game so far.
+
+
+Special Plays Information
+
+punt_blocked                          : Binary indicator for if the punt was blocked.
+punt_inside_twenty                    : Binary indicator for if the punt ended inside the twenty yard line.
+punt_in_endzone                       : Binary indicator for if the punt was in the endzone.
+punt_out_of_bounds                    : Binary indicator for if the punt went out of bounds.
+punt_downed                           : Binary indicator for if the punt was downed.
+punt_fair_catch                       : Binary indicator for if the punt was caught with a fair catch.
+kickoff_inside_twenty                 : Binary indicator for if the kickoff ended inside the twenty yard line.
+kickoff_in_endzone                    : Binary indicator for if the kickoff was in the endzone.
+kickoff_out_of_bounds                 : Binary indicator for if the kickoff was out of bounds.
+kickoff_downed                        : Binary indicator for if the kickoff was downed.
+kickoff_fair_catch                    : Binary indicator for if the kickoff was caught with a fair catch.
+own_kickoff_recovery                  : Binary indicator for if the kicking team recovered the kickoff.
+own_kickoff_recovery_td               : Binary indicator for if the kicking team recovered the kickoff and scored a TD.
+first_down_rush                       : Binary indicator for if a running play converted the first down.
+first_down_pass                       : Binary indicator for if a passing play converted the first down.
+first_down_penalty                    : Binary indicator for if a penalty converted the first down.
+third_down_converted                  : Binary indicator for if the first down was converted on third down.
+third_down_failed                     : Binary indicator for if the posteam failed to convert first down on third down.
+fourth_down_converted                 : Binary indicator for if the first down was converted on fourth down.
+fourth_down_failed                    : Binary indicator for if the posteam failed to convert first down on fourth down.
+touchback                             : Binary indicator for if a touchback occurred on the play.
+interception                          : Binary indicator for if the pass was intercepted.
+incomplete_pass                       : Binary indicator for if the pass was incomplete.
+fumble_forced                         : Binary indicator for if the fumble was forced.
+fumble_not_forced                     : Binary indicator for if the fumble was not forced.
+fumble_out_of_bounds                  : Binary indicator for if the fumble went out of bounds.
+fumble_lost                           : Binary indicator for if the fumble was lost.
+safety                                : Binary indicator for whether or not a safety occurred.
+tackled_for_loss                      : Binary indicator for whether or not a tackle for loss on a run play occurred.
+touchdown                             : Binary indicator for if the play resulted in a TD.
+pass_touchdown                        : Binary indicator for if the play resulted in a passing TD.
+rush_touchdown                        : Binary indicator for if the play resulted in a rushing TD.
+return_touchdown                      : Binary indicator for if the play resulted in a return TD.
+qb_hit                                : Binary indicator if the QB was hit on the play.
+rush_attempt                          : Binary indicator for if the play was a run.
+pass_attempt                          : Binary indicator for if the play was a pass attempt (includes sacks).
+sack                                  : Binary indicator for if the play ended in a sack.
+extra_point_attempt                   : Binary indicator for extra point attempt.
+two_point_attempt                     : Binary indicator for two point conversion attempt.
+field_goal_attempt                    : Binary indicator for field goal attempt.
+kickoff_attempt                       : Binary indicator for kickoff.
+punt_attempt                          : Binary indicator for punts.
+complete_pass                         : Binary indicator for if the pass was completed.
+assist_tackle                         : Binary indicator for if an assist tackle occurred.
+lateral_reception                     : Binary indicator for if a lateral occurred on the reception.
+lateral_rush                          : Binary indicator for if a lateral occurred on a run.
+lateral_return                        : Binary indicator for if a lateral occurred on a return.
+lateral_recovery                      : Binary indicator for if a lateral occurred on a fumble recovery.
+tackle_with_assist                    : Binary indicator for if there has been a tackle with assist.
+replay_or_challenge                   : Binary indicator for whether or not a replay or challenge.
+replay_or_challenge_result            : String indicating the result of the replay or challenge.
+penalty                               : Binary indicator for whether or not a penalty occurred.
+penalty_yards                         : Yards gained (or lost) by the posteam from the penalty.
+penalty_type                          : String indicating the penalty type of the first penalty in the given play. Will be NA if desc is missing the type.
+defensive_two_point_attempt           : Binary indicator whether or not the defense was able to have an attempt on a two point conversion, this results following a turnover.
+defensive_two_point_conv              : Binary indicator whether or not the defense successfully scored on the two point conversion.
+defensive_extra_point_attempt         : Binary indicator whether or not the defense was able to have an attempt on an extra point attempt, this results following a blocked attempt that the defense recovers the ball.
+defensive_extra_point_conv            : Binary indicator whether or not the defense successfully scored on an extra point attempt.
+special_teams_play                    : Binary indicator for whether play is special teams play from NFL source. Available 2011 and beyond with source "nfl".
+st_play_type                          : Type of special teams play from NFL source. Available 2011 and beyond with source "nfl".
+kick_distance                         : Numeric distance in yards for kickoffs, field goals, and punts.
+
+
+Advanced Metrics Information
+
+cp                                    : Numeric value indicating the probability for a complete pass based on comparable game situations.
+cpoe                                  : For a single pass play this is 1 - cp when the pass was completed or 0 - cp when the pass was incomplete. Analyzed for a whole game or season an indicator for the passer how much over or under expectation his completion percentage was.
+series                                : Starts at 1, each new first down increments, numbers shared across both teams NA: kickoffs, extra point/two point conversion attempts, non-plays, no posteam.
+series_success                        : 1: scored touchdown, gained enough yards for first down.
+series_result                         : Possible values: First down, Touchdown, Opp touchdown, Field goal, Missed field goal, Safety, Turnover, Punt, Turnover on downs, QB kneel, End of half.
+play_clock                            : Time on the play clock when the ball was snapped.
+play_deleted                          : Binary indicator for deleted plays.
+play_type_nfl                         : Play type as listed in the NFL source. Slightly different to the regular play_type variable.
+air_yards                             : Numeric value for distance in yards perpendicular to the line of scrimmage at where the targeted receiver either caught or didn’t catch the ball.
+yards_after_catch                     : Numeric value for distance in yards perpendicular to the yard line where the receiver made the reception to where the play ended.
+pass_length                           : String indicator for pass length: short or deep.
+pass_location                         : String indicator for pass location: left, middle, or right.
+run_location                          : String indicator for location of run: left, middle, or right.
+run_gap                               : String indicator for line gap of run: end, guard, or tackle.
+drive_real_start_time                 : Local day time when the drive started (currently not used by the NFL and therefore mostly 'NA').
+order_sequence                        : Column provided by NFL to fix out-of-order plays. Available 2011 and beyond with source "nfl".
+time_of_day                           : Time of day of play in UTC "HH:MM:SS" format. Available 2011 and beyond with source "nfl".
+nfl_api_id                            : UUID of the game in the new NFL API.
+pass_oe                               : Pass Over Expected, indicating how often a team passes compared to expectations. (e.g., 0.05)
+qb_epa                                : Expected Points Added (EPA) attributed to the quarterback on the play. (e.g., 0.8)
+xpass                                 : Expected pass rate, showing the likelihood of passing based on down, distance, and game situation. (e.g., 0.60)
+xyac_epa                              : Expected Points Added (EPA) attributed to Yards After Catch (YAC). (e.g., 0.3)
+xyac_mean_yardage                     : Mean expected yards after catch for the play. (e.g., 5.0)
+xyac_median_yardage                   : Median expected yards after catch for the play. (e.g., 4.0)
+xyac_success                          : Indicator if the play met or exceeded expected YAC. (e.g., 1 for yes, 0 for no)
+xyac_fd                               : Indicator if the play resulted in a first down based on YAC. (e.g., 1 for yes, 0 for no)
+
+
+Miscellaneous Information
+
+aborted_play                          : Indicator if the play was aborted before completion (e.g., 1 for yes, 0 for no).
+assist_tackle_1_player_id             : Unique identifier for the first player who assisted in a tackle during the play.
+assist_tackle_1_player_name           : Name of the first player who assisted in a tackle during the play.
+assist_tackle_2_player_id             : Unique identifier for the second player who assisted in a tackle during the play.
+assist_tackle_2_player_name           : Name of the second player who assisted in a tackle during the play.
+assist_tackle_3_player_id             : Unique identifier for the third player who assisted in a tackle during the play.
+assist_tackle_3_player_name           : Name of the third player who assisted in a tackle during the play.
+assist_tackle_4_player_id             : Unique identifier for the fourth player who assisted in a tackle during the play.
+assist_tackle_4_player_name           : Name of the fourth player who assisted in a tackle during the play.
+away_timeouts_remaining               : Numeric value indicating the number of timeouts remaining for the away team in the half.
+home_timeouts_remaining               : Numeric value indicating the number of timeouts remaining for the home team in the half.
+fantasy                               : Indicator or data related to fantasy football scoring or relevance for the play.
+fantasy_id                            : Unique identifier for the fantasy football event or play.
+fantasy_player_id                     : Unique identifier for the player relevant to fantasy football scoring.
+fantasy_player_name                   : Name of the player relevant to fantasy football scoring.
+fumble_recovery_1_yards               : Numeric value of yards gained by the first player who recovered a fumble during the play.
+fumble_recovery_2_yards               : Numeric value of yards gained by the second player who recovered a fumble during the play.
+home_opening_kickoff                  : Binary indicator for whether the home team performed the opening kickoff.
+nflverse_game_id                      : Unique identifier for the game as provided by the NFLverse data source.
+no_huddle                             : Binary indicator for whether the play was executed in a no-huddle offense.
+return_yards                          : Numeric value of yards gained by the return team during the play.
+
+
+Route Data and Time-to-Throw
+
+ngs_air_yards                         : Next Gen Stats air yards, providing a more detailed measure of air yardage. (e.g., 15.2)
+time_to_throw                         : The time taken by the quarterback to throw the ball after the snap. (e.g., 2.5 seconds)
+route                                 : The route run by the receiver during the play (e.g., slant, go).
+was_pressure                          : Indicator if the quarterback was under pressure during the play. (e.g., 1 for yes, 0 for no)
