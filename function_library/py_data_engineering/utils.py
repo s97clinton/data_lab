@@ -30,3 +30,23 @@ def is_json_serializable(value: any) -> bool:
         return True
     except (TypeError, OverflowError):
         return False
+    
+def convert_string_to_boolean(value: any) -> any:
+    """
+    Function: 
+    -Converts mixed type of None when updating a True/False
+    string to Boolean type.
+
+    Parameters:
+    <value> (any): Value to check
+
+    Returns:
+    <value> (any): Updated Value
+    """
+    if value == 'True':
+        return True
+    elif value == 'False':
+        return False
+    elif value == 'None' or pd.isna(value):
+        return None
+    return value

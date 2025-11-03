@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-from functions.utils import calculate_generic_yardline
 
 def update_team_abbreviations(df: pd.DataFrame, old_abbv: str, new_abbv: str) -> pd.DataFrame:
     """
@@ -59,6 +58,36 @@ def process_penalty_types(df:pd.DataFrame) -> pd.DataFrame:
     df['penalty_dead_ball_no_play'] = np.where((df['play_type'] == 'no_play') & (df['penalty_type'].isin(penalty_types_dead_ball)) & (df['penalty'] == 1.0), 1.0, 0.0)
     df['penalty_unknown_no_play'] = np.where((df['play_type'] == 'no_play') & (df['penalty_type'].isin(penalty_types_either_or)) & (df['penalty'] == 1.0), 1.0, 0.0)
     df['penalty_live_snap_no_play'] = np.where((df['play_type'] == 'no_play') & ~(df['penalty_type'].isin(penalty_types_dead_ball + penalty_types_either_or))  & (df['penalty'] == 1.0), 1.0, 0.0)
+    
+    return df
+
+def calculate_generic_yardline(df: pd.DataFrame, possession_field: str, yardline_field: str) -> pd.DataFrame:
+    """
+    Function:
+    -Takes a <yardline_field> column with the standard 'Team 50' yardline coding and converts
+    the value to a 0-100 scale where the "0" and "100" denote the "own endline" and "opponent endline"
+    for the team in the <possession_field>.
+
+    Parameters:
+    <df> (Pandas DataFrame): DataFrame of NFL pbp_data containing the <possession_field> and <yardline_field>.
+    <possession_field> (str): String denoting the column name for the <possession_field>.
+    <yardline_field> (str): String denoting the column name for the <yardline_field>.
+
+    Returns:
+    <df> (Pandas DataFrame): Updated DataFrame.
+    """
+    def calculate_yardline(row):
+        possession_team = row[possession_field]
+        yardline_value = row[yardline_field]
+        
+        if pd.isnull(yardline_value):
+            return None
+        if possession_team in yardline_value:
+            return int(yardline_value.split()[-1])
+        else:
+            return 100 - int(yardline_value.split()[-1])
+        
+    df[yardline_field] = df.apply(calculate_yardline, axis=1).astype('float')
     
     return df
 
@@ -169,8 +198,8 @@ def update_column_values(df: pd.DataFrame) -> pd.DataFrame:
     df['drive_result'] = df.groupby(['game_id', 'drive'])['drive_result'].transform(_final_drive_result_nfl_data_py_pbp)
     
     drive_result_replacement_dict = {
-        "Field goal": "field_goal_attempt",
-        "Missed field goal": "field_goal_attempt",
+        "Field goal": "field_goal_made",
+        "Missed field goal": "field_goal_miss",
         "Punt": "punt",
         "Turnover on downs": "downs",
         "Safety": "safety",
@@ -178,21 +207,14 @@ def update_column_values(df: pd.DataFrame) -> pd.DataFrame:
         "lost_fumble_opp_td": "lost_fumble", 
         "fumble": "lost_fumble", 
         "int_ret_opp_td": "interception", 
-        "end_of_game": "end_of_half", 
-        "Turnover": "field_goal_attempt", 
-        "off_fr_td": "other", 
+        "end_of_game": "end_of_half",
         "punt_return_td":"punt", 
-        "punt_block_safety":"punt"
+        "punt_block_safety":"punt", 
+        "Turnover": "other", 
+        "off_fr_td": "other", 
+        "Opp touchdown": "other"
     }
     df['drive_result'] = df['drive_result'].replace(drive_result_replacement_dict)
-
-    return_td_into_play_type_replacement_dict = {
-        "punt_returned_opp_td": "punt",
-        "int_opp_td": "interception",
-        "lost_fumble_opp_td": "lost_fumble",
-        "fga_returned_opp_td": "field_goal_attempt"
-    }
-    df['drive_result'] = df['drive_result'].replace(return_td_into_play_type_replacement_dict)
 
     return df
 
@@ -237,12 +259,121 @@ def prep_nfl_data_py_pbp(pbp_df: pd.DataFrame) -> pd.DataFrame:
     df = df.dropna(subset=['posteam', 'defteam', 'drive'])
     df = df.sort_values(by=['season', 'week'], ascending=[True, True])
     df = process_penalty_types(df)
+    df = calculate_generic_yardline(df, 'posteam', 'drive_start_yard_line')
     df = calculate_generic_yardline(df, 'posteam', 'drive_end_yard_line')
     df = update_column_values(df)
     df = simple_column_creation(df)
-    df = parse_weather_column(df)
+    df = parse_weather_column(df)    
+    return df
 
+def filter_and_subset_nfl_data_py_pbp(pbp_df = pd.DataFrame) -> pd.DataFrame:
+    """
+    Function:
+    -Applies a 'play_type' filter and subsets relevant columns for final pbp training set.
+
+    Parameters:
+    <pbp_df> (Pandas DataFrame): DataFrame of play-by-play data.
+
+    Returns:
+    <df> (Pandas DataFrame): Cleaned DataFrame of play-by-play data.
+    """
+    df = pbp_df.copy()
     df = df[df['play_type'].isin(['run', 'pass', 'qb_kneel', 'qb_spike'])]
     df = df[['game_id', 'season', 'week', 'stadium', 'roof', 'temp', 'wind', 'offense', 'defense', 'home_team_on_offense', 'half', 'qtr', 'game_seconds_remaining', 'half_seconds_remaining', 'score_differential', 'posteam_score', 'drive', 'down', 'distance', 'yardline', 'drive_end_yard_line', 'goal_to_go', 'play_type', 'yards_gained', 'first_down', 'passer_id', 'passer_player_name', 'rusher_id', 'rusher_player_name', 'receiver_id', 'receiver_player_name', 'complete_pass', 'sack', 'touchdown', 'drive_result']]
+    return df
+
+def drive_time_processing_steps(df: pd.DataFrame, column: str = 'drive_game_clock_start') -> pd.DataFrame:
+    """
+    Function:
+    -This function will take a Pandas Dataframe and use the columns in the table to convert a time 
+    string to a continuous value denoting the seconds remaining in the half. <df> must
+    contain (1) a "time" column to convert and (2) a "qtr" columns to give context to how much time
+    is left in the half.
+    
+    Parameters:
+    <df>: Pandas Dataframe with the time field for conversion ["drive_game_clock_start"]
+    
+    Returns:
+    <update_df>: Pandas Dataframe with the time field converted
+    """
+    def _preprocess_drive_start_time(time_str: str) -> str:
+        """
+        Function:
+        -Helper Function to preprocess the <time_str> value in a specified column;
+        this function will remove any leading "00:" from the time string to ensure
+        it is in MM:SS format.
+        """
+        if pd.isna(time_str) or time_str is None:
+            return None
+        if time_str.startswith("00:") and len(time_str) == 8:
+            time_str = time_str[3:]
+        return time_str
+    def _convert_to_seconds(quarter: int, time_str: str) -> int:
+        """
+        Function:
+        -Helper Function to use the (1) quarter and (2) time column to process the <time_str>
+        value in a specified column into seconds; the value returned will be the seconds
+        remaining in the half of an NFL football game.
+        """
+        if pd.isna(time_str) or time_str is None:
+            return None
+        
+        try:
+            minutes, seconds = map(int, time_str.split(':'))
+        except ValueError:
+            return None
+        
+        total_seconds = minutes * 60 + seconds
+        if quarter in [1.0, 3.0]:
+            return (15 * 60) + total_seconds
+        elif quarter in [2.0, 4.0, 5.0]:
+            return total_seconds
+    
+    update_df = df.copy()
+    update_df['temp_drive_start_time'] = update_df[column].apply(_preprocess_drive_start_time)    
+    update_df['half_seconds_remaining'] = update_df.apply(lambda row: _convert_to_seconds(row['qtr'], row['temp_drive_start_time']), axis=1)
+    update_df.drop(columns=['temp_drive_start_time'], inplace=True)
+    
+    return update_df
+
+def nfl_data_py_pbp_to_drives(pbp_df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Function:
+    -This function takes a pandas dataframe, <df>, from the MongoDB collection nfl_data_py_pbp_data,
+    and rolls that play-by-play data up to the drive level.
+    
+    Parameters:
+    <pbp_df> (Pandas Dataframe): Dataframe with nfl_data_py pbp data. 
+    
+    Returns:
+    <drive_df> (Pandas Dataframe): Dataframe with "drive level" data.
+    """
+    df = pbp_df[['season', 'game_id', 'start_time', 'stadium', 'roof', 'surface', 'temp', 'wind', 'home_team', 'away_team', 'season_type', 'week', 'offense', 'defense', 'home_team_on_offense', 'score_differential', 'half', 'qtr', 'drive', 'drive_quarter_start', 'drive_quarter_end', 'drive_game_clock_start', 'drive_game_clock_end','drive_time_of_possession', 'drive_start_yard_line', 'drive_end_yard_line', 'drive_play_id_started', 'drive_play_id_ended', 'drive_play_count', 'drive_first_downs', 'fixed_drive_result', 'drive_result', 'extra_point_attempt', 'extra_point_result', 'two_point_attempt', 'two_point_conv_result', 'kickoff_attempt', 'rush_attempt', 'pass_attempt', 'field_goal_attempt', 'punt_attempt', 'penalty_dead_ball_no_play', 'penalty_unknown_no_play', 'penalty_live_snap_no_play', 'aborted_play', 'qb_dropback', 'qb_kneel', 'qb_spike', 'qb_scramble', 'qb_hit', 'complete_pass', 'incomplete_pass', 'sack', 'solo_tackle', 'assist_tackle', 'tackled_for_loss', 'fumble_forced', 'fumble_not_forced', 'fumble_out_of_bounds']]
+    group_by_cols = ['game_id', 'drive']
+    static_cols = ['season', 'start_time', 'stadium', 'roof', 'surface', 'temp', 'wind', 'home_team', 'away_team', 'season_type', 'week', 'offense', 'defense', 'home_team_on_offense', 'score_differential', 'half', 'qtr', 'drive_quarter_start', 'drive_quarter_end', 'drive_game_clock_start', 'drive_game_clock_end', 'drive_time_of_possession', 'drive_start_yard_line', 'drive_end_yard_line', 'drive_play_id_started', 'drive_play_id_ended', 'drive_play_count', 'drive_first_downs', 'fixed_drive_result', 'drive_result', 'extra_point_attempt','extra_point_result', 'two_point_attempt','two_point_conv_result']
+    sum_cols = ['kickoff_attempt', 'rush_attempt', 'pass_attempt', 'field_goal_attempt', 'punt_attempt', 'penalty_dead_ball_no_play', 'penalty_unknown_no_play','penalty_live_snap_no_play', 'aborted_play', 'qb_dropback', 'qb_kneel', 'qb_spike', 'qb_scramble', 'qb_hit', 'complete_pass', 'incomplete_pass', 'sack', 'solo_tackle', 'assist_tackle', 'tackled_for_loss', 'fumble_forced', 'fumble_not_forced', 'fumble_out_of_bounds']
+
+    drive_df = df.groupby(group_by_cols).agg({**{col: 'last' for col in static_cols}, **{col: 'sum' for col in sum_cols}}).reset_index()
+    drive_df = drive_time_processing_steps(drive_df)
+    drive_df['total_penalties'] = drive_df['penalty_dead_ball_no_play'] + drive_df['penalty_unknown_no_play'] + drive_df['penalty_live_snap_no_play'] 
+    drive_df.rename(columns={'rush_attempt': 'rush_attempts', 'pass_attempt': 'pass_dropbacks','sack': 'sacks'}, inplace=True)
+    drive_df['counted_penalties'] = drive_df['drive_play_count'] - drive_df['rush_attempts'] - drive_df['pass_dropbacks']
+
+    return drive_df
+
+def filter_and_subset_nfl_drive_df(drive_df = pd.DataFrame) -> pd.DataFrame:
+    """
+    Function:
+    -Filters the drive_df and subsets relevant columns for final drive training set.
+
+    Parameters:
+    <drive_df> (Pandas DataFrame): DataFrame of play-by-play data.
+
+    Returns:
+    <df> (Pandas DataFrame): Cleaned DataFrame of play-by-play data.
+    """
+    df = drive_df.copy()
+    df = df[~(df['drive_result']=='other')]
+    df = df[['game_id', 'drive', 'season', 'week', 'offense', 'defense', 'home_team_on_offense', 'score_differential', 'half', 'qtr', 'half_seconds_remaining', 'drive_start_yard_line', 'drive_end_yard_line', 'drive_result', 'drive_play_count', 'rush_attempts', 'pass_dropbacks', 'sacks', 'counted_penalties', 'total_penalties']]
     
     return df

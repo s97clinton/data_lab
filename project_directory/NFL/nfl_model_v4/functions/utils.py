@@ -1,6 +1,3 @@
-import numpy as np
-import pandas as pd
-
 nfl_team_map = {
     'Arizona Cardinals': 'ARI', 'Atlanta Falcons': 'ATL', 'Baltimore Ravens': 'BAL', 'Buffalo Bills': 'BUF',
     'Carolina Panthers': 'CAR', 'Chicago Bears': 'CHI', 'Cincinnati Bengals': 'CIN', 'Cleveland Browns': 'CLE',
@@ -11,6 +8,7 @@ nfl_team_map = {
     'New York Jets': 'NYJ', 'Philadelphia Eagles': 'PHI', 'Pittsburgh Steelers': 'PIT', 'San Francisco 49ers': 'SF',
     'Seattle Seahawks': 'SEA', 'Tampa Bay Buccaneers': 'TB', 'Tennessee Titans': 'TEN', 'Washington Commanders': 'WAS'
 }
+
 
 def load_nfl_team_map(nfl_team_map: dict = nfl_team_map) -> dict:
     """
@@ -28,35 +26,6 @@ def load_nfl_team_map(nfl_team_map: dict = nfl_team_map) -> dict:
     
     return nfl_team_map
 
-def calculate_generic_yardline(df: pd.DataFrame, possession_field: str, yardline_field: str) -> pd.DataFrame:
-    """
-    Function:
-    -Takes a <yardline_field> column with the standard 'Team 50' yardline coding and converts
-    the value to a 0-100 scale where the "0" and "100" denote the "own endline" and "opponent endline"
-    for the team in the <possession_field>.
-
-    Parameters:
-    <df> (Pandas DataFrame): DataFrame of NFL pbp_data containing the <possession_field> and <yardline_field>.
-    <possession_field> (str): String denoting the column name for the <possession_field>.
-    <yardline_field> (str): String denoting the column name for the <yardline_field>.
-
-    Returns:
-    <df> (Pandas DataFrame): Updated DataFrame.
-    """
-    def calculate_yardline(row):
-        possession_team = row[possession_field]
-        yardline_value = row[yardline_field]
-        
-        if pd.isnull(yardline_value):
-            return None
-        if possession_team in yardline_value:
-            return int(yardline_value.split()[-1])
-        else:
-            return 100 - int(yardline_value.split()[-1])
-        
-    df[yardline_field] = df.apply(calculate_yardline, axis=1).astype('float')
-    
-    return df
 
 def standardize_yard_line(yard_line: str, posteam: str, defteam: str) -> int:
     """
