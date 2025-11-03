@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-def update_team_abbreviations(df: pd.DataFrame, old_abbv: str, new_abbv: str) -> pd.DataFrame:
+def update_team_abbreviations(df: pd.DataFrame, old_abbv: str, new_abbv: str, game_id_col: str='game_id', offense_col: str='posteam', defense_col: str='defteam') -> pd.DataFrame:
     """
     Function:
     -This function will update the abbreviations for a given team in an nfl_data_py
@@ -14,10 +14,19 @@ def update_team_abbreviations(df: pd.DataFrame, old_abbv: str, new_abbv: str) ->
     Returns:
     <df> (Pandas DataFrame): Updated DataFrame
     """
-    df['game_id'] = df['game_id'].apply(lambda x: x.replace(f'_{old_abbv}_', f'_{new_abbv}_') if old_abbv in x.split('_') else x)
-    df['game_id'] = df['game_id'].apply(lambda x: x.replace(f'_{old_abbv}', f'_{new_abbv}') if old_abbv in x.split('_') else x) 
-    df['posteam'] = df['posteam'].replace(old_abbv, new_abbv)
-    df['defteam'] = df['defteam'].replace(old_abbv, new_abbv)
+    try:
+        df[game_id_col] = df[game_id_col].apply(lambda x: x.replace(f'_{old_abbv}_', f'_{new_abbv}_') if old_abbv in x.split('_') else x)
+        df[game_id_col] = df[game_id_col].apply(lambda x: x.replace(f'_{old_abbv}', f'_{new_abbv}') if old_abbv in x.split('_') else x)
+    except KeyError as e:
+        print(f"The {game_id_col} is causing the following exception: {e}")
+    try:
+        df[offense_col] = df[offense_col].replace(old_abbv, new_abbv)
+    except KeyError as e:
+        print(f"The {offense_col} is causing the following exception: {e}")
+    try:
+        df[defense_col] = df[defense_col].replace(old_abbv, new_abbv)
+    except KeyError as e:
+        print(f"The {defense_col} is causing the following exception: {e}")
 
     return df
 
@@ -375,5 +384,36 @@ def filter_and_subset_nfl_drive_df(drive_df = pd.DataFrame) -> pd.DataFrame:
     df = drive_df.copy()
     df = df[~(df['drive_result']=='other')]
     df = df[['game_id', 'drive', 'season', 'week', 'offense', 'defense', 'home_team_on_offense', 'score_differential', 'half', 'qtr', 'half_seconds_remaining', 'drive_start_yard_line', 'drive_end_yard_line', 'drive_result', 'drive_play_count', 'rush_attempts', 'pass_dropbacks', 'sacks', 'counted_penalties', 'total_penalties']]
+    
+    return df
+
+def nfl_data_py_weekly_transform_import(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Helper Function:
+    -This function takes a DataFrame containing imported data from nfl_data_py_weekly and performs 
+    cleanup steps.
+    
+    Parameters:
+    <df> (Pandas DataFrame): Pandas DataFrame containing data from nfl_data_py_weekly
+    
+    Returns:
+    <df (Pandas DataFrame): Updated DataFrame.
+    """
+    df.rename(columns={'recent_team': 'offense', 'opponent_team': 'defense'}, inplace=True)
+    df = df[df['offense'] != df['defense']].copy()
+    df[['offense', 'defense']] = df[['offense', 'defense']].replace('LA', 'LAR')
+    df.loc[df['player_name'] == 'Taysom Hill', ['position', 'position_group']] = 'TE'
+    df['yards_per_rec'] = df['receiving_yards'] / df['receptions']
+    df['yards_per_rec'] = df['yards_per_rec'].fillna(0)
+    df['tgt_conv_rate'] = df['receptions'] / df['targets']
+    df['tgt_conv_rate'] = df['tgt_conv_rate'].fillna(0)
+    df['target_share'] = df['target_share'].fillna(0)
+    df = df.sort_values(by=['season', 'week', 'offense'])
+    df['team_total_carries'] = df.groupby(['offense', 'season', 'week'])['carries'].transform('sum')
+    df['team_total_rushing_tds'] = df.groupby(['offense', 'season', 'week'])['rushing_tds'].transform('sum')  
+    df['team_total_receiving_tds'] = df.groupby(['offense', 'season', 'week'])['receiving_tds'].transform('sum')
+    df['carry_share'] = df.apply(lambda row: row['carries'] / row['team_total_carries'] if row['team_total_carries'] > 0 else 0, axis=1)
+    df['rush_td_share'] = df.apply(lambda row: row['rushing_tds'] / row['team_total_rushing_tds'] if row['team_total_rushing_tds'] > 0 else 0, axis=1)
+    df['rec_td_share'] = df.apply(lambda row: row['receiving_tds'] / row['team_total_receiving_tds'] if row['team_total_receiving_tds'] > 0 else 0, axis=1)
     
     return df
