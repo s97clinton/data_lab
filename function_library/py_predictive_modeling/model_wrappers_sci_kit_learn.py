@@ -13,7 +13,7 @@ def multinomial_logistic_regression(train_set: pd.DataFrame,
                                     one_hot_features: list = None, 
                                     ordinal_features: list = None, 
                                     solver: str = 'lbfgs', 
-                                    max_iter: int = 1000, 
+                                    max_iter: int = 10000, 
                                     test_set_target: bool = False) -> tuple:
     """
     Function:
@@ -73,7 +73,7 @@ def multinomial_logistic_regression(train_set: pd.DataFrame,
     class_labels = pipeline.named_steps['model'].classes_
     y_prob_df = pd.DataFrame(y_prob, columns=[f'{label}' for label in class_labels])
 
-    test_output = pd.concat([test_set, y_prob_df], axis=1)
+    test_output = pd.concat([test_set.reset_index(), y_prob_df.reset_index()], axis=1)
 
     if test_set_target == True:
         report = classification_report(y_test, y_pred, zero_division=0)

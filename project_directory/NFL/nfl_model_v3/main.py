@@ -13,7 +13,6 @@ def nfl_model_v3(start_season: int, current_season: int, projection_weeks: list[
     """
     Main function to run the NFL model version 3.
     """
-    model_start_time = datetime.now()
     nfl_seasons = list(range(start_season, current_season + 1))
     nfl_weeks = list(range(1,23))
     nfl_teams = ['ARI','ATL','BAL','BUF','CAR','CHI','CIN','CLE','DAL','DEN','DET','GB','HOU','IND','JAX','KC','LAC','LAR','LVR','MIA','MIN','NE','NO','NYG','NYJ','PHI','PIT','SEA','SF','TB','TEN','WSH']
@@ -45,10 +44,11 @@ def nfl_model_v3(start_season: int, current_season: int, projection_weeks: list[
         game_projections.to_csv(f"result_dump/{current_season}_game_projections_week_{game_wk}.csv")
         print(game_projections)
 
-    model_end_time = datetime.now()
-    print(model_end_time - model_start_time)
 
 if __name__ == '__main__':
+    model_start_time = datetime.now()
     nfl_model_v3(start_season = 2022, current_season = 2025, projection_weeks = list(range(8,10)))
+    model_end_time = datetime.now()
+    print(model_end_time - model_start_time)
 
 
