@@ -417,3 +417,38 @@ def nfl_data_py_weekly_transform_import(df: pd.DataFrame) -> pd.DataFrame:
     df['rec_td_share'] = df.apply(lambda row: row['receiving_tds'] / row['team_total_receiving_tds'] if row['team_total_receiving_tds'] > 0 else 0, axis=1)
     
     return df
+
+def prep_schedule_data(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Function:
+    """
+    df[['away_team', 'home_team']] = df[['away_team', 'home_team']].replace('LA', 'LAR')
+    df['neutral_site'] = df['location'] == 'Neutral'
+    df.drop(columns=['location'], inplace=True)
+    df = df[['season', 'week', 'game_id', 'gameday', 'gametime', 'game_type', 'neutral_site', 'stadium_id', 'stadium', 'away_team', 'home_team', 
+             'away_rest', 'home_rest', 'away_moneyline', 'home_moneyline', 'spread_line', 'away_spread_odds', 'home_spread_odds',
+             'total_line', 'under_odds', 'over_odds', 'div_game', 'roof', 'surface',
+             'away_coach', 'home_coach', 'referee',
+             'away_qb_id', 'home_qb_id', 'away_qb_name', 'home_qb_name', 'temp', 'wind',
+             'away_score', 'home_score', 'result', 'total', 'overtime']]
+    
+    return df
+
+def convert_schedule_to_test_frame(df: pd.DataFrame, test_split_season: int, test_split_week: int) -> pd.DataFrame:
+    """
+    Function:
+    """
+    test_df = df[(df['season'] == test_split_season) & (df['week'] > test_split_week)].copy()
+    test_df = test_df[['season', 'week', 'game_id', 'gameday', 'gametime', 'neutral_site', 'away_team', 'away_coach', 'away_qb_name', 'away_qb_id', 'home_team', 'home_coach', 'home_qb_name', 'home_qb_id']]
+    away_test_df = test_df.copy()
+    away_test_df.drop(columns=['home_qb_name', 'home_qb_id'], inplace=True)
+    away_test_df.rename(columns={'away_team': 'offense', 'away_coach': 'offense_coach', 'away_qb_name': 'offense_qb_name', 'away_qb_id': 'offense_qb_id', 'home_team': 'defense', 'home_coach': 'defense_coach'}, inplace=True)
+    away_test_df['home_team_on_offense'] = False
+    home_test_df = test_df.copy()
+    home_test_df.drop(columns=['away_qb_name', 'away_qb_id'], inplace=True)
+    home_test_df.rename(columns={'home_team': 'offense', 'home_coach': 'offense_coach', 'home_qb_name': 'offense_qb_name', 'home_qb_id': 'offense_qb_id', 'away_team': 'defense', 'away_coach': 'defense_coach'}, inplace=True)
+    home_test_df['home_team_on_offense'] = True
+    full_test_df = pd.concat([away_test_df, home_test_df], ignore_index=True)
+    full_test_df = full_test_df.sort_values(by=['season', 'week', 'gameday', 'gametime', 'game_id'])
+    
+    return full_test_df
