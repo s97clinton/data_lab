@@ -213,9 +213,8 @@ def update_column_values(df: pd.DataFrame) -> pd.DataFrame:
         "Turnover on downs": "downs",
         "Safety": "safety",
         "End of half": "end_of_half",
-        "lost_fumble_opp_td": "lost_fumble", 
         "fumble": "lost_fumble", 
-        "int_ret_opp_td": "interception", 
+        "int_ret_opp_td": "int_opp_td", 
         "end_of_game": "end_of_half",
         "punt_return_td":"punt", 
         "punt_block_safety":"punt", 
@@ -452,3 +451,54 @@ def convert_schedule_to_test_frame(df: pd.DataFrame, test_split_season: int, tes
     full_test_df = full_test_df.sort_values(by=['season', 'week', 'gameday', 'gametime', 'game_id'])
     
     return full_test_df
+        
+def convert_test_output_to_game_outcomes(test_output: pd.DataFrame, train_df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Function:
+    -Convert drive-level projections to game-level projections.
+
+    Parameters:
+    <test_output> (DataFrame): DataFrame containing drive-level projections.
+
+    Returns:
+    <game_projections> (DataFrame): DataFrame containing game-level projections.
+    """
+    df = test_output.copy()
+    df['proj_pts_per_drive'] = (df['field_goal_made']*3) + (df['off_kor_td']*7) + (df['pass_td']*7) + (df['rush_td']*7)
+    df['opp_def_proj_pts_per_drive'] = (df['safety']*2) + (df['punt_returned_opp_td']*7) + (df['int_opp_td']*(7)) + (df['lost_fumble_opp_td']*(7)) + (df['fga_returned_opp_td']*(7))
+    drives_per_gm_train_set = (
+        train_df.groupby(['game_id', 'offense'])
+        .size()
+        .groupby('offense')
+        .agg(
+            mean_drives = ('mean'),
+            median_drives = ('median'),
+            std_drives = ('std'),
+            games_played = ('count')
+        )
+        .reset_index()
+    )
+    df = df.merge(drives_per_gm_train_set, on = 'offense', how = 'left')
+    game_projection_df = df[df['home_team_on_offense']].copy()
+    game_projection_df = game_projection_df[['season', 'week', 'game_id', 'gameday', 'gametime', 'neutral_site']]
+    home_score_df = df[df['home_team_on_offense']].copy()
+    home_score_df.rename(columns={'offense':'home', 'offense_coach':'home_coach', 'offense_qb_name':'home_qb_name', 'offense_qb_id':'home_qb_id', 
+                                  'proj_pts_per_drive':'home_proj_pts_per_drive', 'opp_def_proj_pts_per_drive':'away_def_proj_pts_per_drive', 'mean_drives':'home_mean_drives'}, inplace=True)
+    home_score_df = home_score_df[['game_id', 'home', 'home_coach', 'home_qb_name', 'home_qb_id', 'home_proj_pts_per_drive', 'away_def_proj_pts_per_drive', 'home_mean_drives']]
+    away_score_df = df[~(df['home_team_on_offense'])].copy()
+    away_score_df.rename(columns={'offense':'away', 'offense_coach':'away_coach', 'offense_qb_name':'away_qb_name', 'offense_qb_id':'away_qb_id', 
+                                  'proj_pts_per_drive':'away_proj_pts_per_drive', 'opp_def_proj_pts_per_drive':'home_def_proj_pts_per_drive', 'mean_drives':'away_mean_drives'}, inplace=True)
+    away_score_df = away_score_df[['game_id', 'away', 'away_coach', 'away_qb_name', 'away_qb_id', 'away_proj_pts_per_drive', 'home_def_proj_pts_per_drive', 'away_mean_drives']]
+    game_projection_df = game_projection_df.merge(home_score_df, how="inner", on="game_id")
+    game_projection_df = game_projection_df.merge(away_score_df, how="inner", on="game_id")
+    game_projection_df['proj_drives'] = (game_projection_df['home_mean_drives'] + game_projection_df['away_mean_drives'])/2
+    game_projection_df['away_proj_pts'] = round(game_projection_df['proj_drives'] * (game_projection_df['away_proj_pts_per_drive'] + game_projection_df['away_def_proj_pts_per_drive']), 2)
+    game_projection_df['home_proj_pts'] = round(game_projection_df['proj_drives'] * (game_projection_df['home_proj_pts_per_drive'] + game_projection_df['home_def_proj_pts_per_drive']), 2)
+    game_projection_df['spread'] = round(game_projection_df['away_proj_pts'] - game_projection_df['home_proj_pts'], 2)
+    game_projection_df['total'] = round(game_projection_df['away_proj_pts'] + game_projection_df['home_proj_pts'], 2)
+
+    game_projection_df = game_projection_df[['season', 'week', 'game_id', 'gameday', 'gametime', 'neutral_site', 
+                                             'away', 'away_coach', 'away_qb_name', 'home', 'home_coach', 'home_qb_name',
+                                             'away_proj_pts', 'home_proj_pts', 'spread', 'total']]
+
+    return game_projection_df

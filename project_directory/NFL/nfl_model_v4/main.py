@@ -5,7 +5,9 @@ parent_dir = os.path.abspath(os.path.join(current_dir, '..', '..', '..'))
 sys.path.append(parent_dir)
 
 from function_library.py_predictive_modeling.model_wrappers_sci_kit_learn import multinomial_logistic_regression
-from functions.data_transformation import prep_nfl_data_py_pbp, filter_and_subset_nfl_data_py_pbp, nfl_data_py_pbp_to_drives, filter_and_subset_nfl_drive_df, nfl_data_py_weekly_transform_import, prep_schedule_data, convert_schedule_to_test_frame
+from functions.data_transformation import (prep_nfl_data_py_pbp, filter_and_subset_nfl_data_py_pbp, nfl_data_py_pbp_to_drives, 
+                                           filter_and_subset_nfl_drive_df, nfl_data_py_weekly_transform_import, prep_schedule_data, 
+                                           convert_schedule_to_test_frame, convert_test_output_to_game_outcomes)
 from functions.feature_engineering import create_features_nfl_data_py
 
 from datetime import datetime
@@ -42,7 +44,7 @@ def nfl_model_v4(future_projection: bool, training_set_seasons: list[int], test_
 
     if future_projection:
         drive_train_df = drive_df
-        drive_test_df = convert_schedule_to_test_frame(schedule_import_df, test_split_season, test_split_week)
+        drive_test_df = convert_schedule_to_test_frame(schedule_df, test_split_season, test_split_week)
         test_set_target = False
     else:        
         drive_train_df = drive_df[~((drive_df['season'] == test_split_season) & (drive_df['week'] > test_split_week))]
@@ -62,22 +64,21 @@ def nfl_model_v4(future_projection: bool, training_set_seasons: list[int], test_
                                                                              features = ['offense','defense','home_team_on_offense'],
                                                                              one_hot_features = ['offense','defense','home_team_on_offense'],
                                                                              test_set_target=test_set_target)
-        
-        # game_projections = pd.DataFrame() #end goal
+        game_projection_df = convert_test_output_to_game_outcomes(test_output, drive_train_df)
     
-    return pbp_df, drive_df, test_output
+    return pbp_df, drive_df, game_projection_df
 
 
 if __name__ == "__main__":
     model_start_time = datetime.now()
-    pbp_df, drive_df, test_output = nfl_model_v4(future_projection=True, 
-                                                 training_set_seasons=[2023, 2024, 2025], 
+    pbp_df, drive_df, game_projection_df = nfl_model_v4(future_projection=True, 
+                                                 training_set_seasons=[2024, 2025], 
                                                  test_split_season=2025,
                                                  test_split_week=9,
                                                  import_weekly_data=False)
     pbp_df.to_csv("csv_output/pbp_df.csv", index=False)
     drive_df.to_csv("csv_output/drive_df.csv", index=False)
-    test_output.to_csv("csv_output/test_output.csv", index=False)
+    game_projection_df.to_csv("csv_output/game_projection_df.csv", index=False)
     model_end_time = datetime.now()
     print(f"The model run time came in at {model_end_time - model_start_time}")
     
