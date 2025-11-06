@@ -29,7 +29,7 @@ def multinomial_logistic_regression(train_set: pd.DataFrame,
     <target> (One Item List): A list containing the target feature. (one-item list)
     <one_hot_features>: List of categorical features that require one-hot encoding.
     <solver>: Choice of solver for multinomial_logistic; defaults to 'lbfgs'.
-    <max_iter>: Value to set max_iter in modeling process; default is 1000.
+    <max_iter>: Value to set max_iter in modeling process; default is 10000.
     <test_set_target> (Boolean): A Boolean indicating whether or not we have the output for the test set. (impacts returned values)
     
     Returns:
@@ -71,9 +71,9 @@ def multinomial_logistic_regression(train_set: pd.DataFrame,
     y_pred = pipeline.predict(x_test)
     y_prob = pipeline.predict_proba(x_test)
     class_labels = pipeline.named_steps['model'].classes_
-    y_prob_df = pd.DataFrame(y_prob, columns=[f'{label}' for label in class_labels])
+    y_prob_df = pd.DataFrame(y_prob, columns=[f'{label}' for label in class_labels]).reset_index()
 
-    test_output = pd.concat([test_set.reset_index(), y_prob_df.reset_index()], axis=1)
+    test_output = pd.concat([test_set, y_prob_df], axis=1)
 
     if test_set_target == True:
         report = classification_report(y_test, y_pred, zero_division=0)
