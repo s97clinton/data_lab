@@ -212,15 +212,19 @@ def update_column_values(df: pd.DataFrame) -> pd.DataFrame:
         "Punt": "punt",
         "Turnover on downs": "downs",
         "Safety": "safety",
+        "punt_block_safety":"safety",
         "End of half": "end_of_half",
         "fumble": "lost_fumble", 
-        "int_ret_opp_td": "int_opp_td", 
         "end_of_game": "end_of_half",
-        "punt_return_td":"punt", 
-        "punt_block_safety":"punt", 
+        "Opp touchdown": "def_td",
+        "int_opp_td": "def_td",
+        "int_ret_opp_td": "def_td",
+        "lost_fumble_opp_td": "def_td",
+        "punt_return_td":"def_td", 
+        "punt_returned_opp_td":"def_td", 
+        "fga_returned_opp_td":"def_td", 
         "Turnover": "other", 
-        "off_fr_td": "other", 
-        "Opp touchdown": "other"
+        "off_fr_td": "other"
     }
     df['drive_result'] = df['drive_result'].replace(drive_result_replacement_dict)
 
@@ -464,8 +468,8 @@ def convert_test_output_to_game_outcomes(test_output: pd.DataFrame, train_df: pd
     <game_projections> (DataFrame): DataFrame containing game-level projections.
     """
     df = test_output.copy()
-    df['proj_pts_per_drive'] = (df['field_goal_made']*3) + (df['off_kor_td']*7) + (df['pass_td']*7) + (df['rush_td']*7)
-    df['opp_def_proj_pts_per_drive'] = (df['safety']*2) + (df['punt_returned_opp_td']*7) + (df['int_opp_td']*(7)) + (df['lost_fumble_opp_td']*(7)) + (df['fga_returned_opp_td']*(7))
+    df['proj_pts_per_drive'] = (df['prob_field_goal_made']*3) + (df['prob_off_kor_td']*7) + (df['prob_pass_td']*7) + (df['prob_rush_td']*7)
+    df['opp_def_proj_pts_per_drive'] = (df['prob_safety']*2) + (df['prob_def_td']*7)
     drives_per_gm_train_set = (
         train_df.groupby(['game_id', 'offense'])
         .size()
