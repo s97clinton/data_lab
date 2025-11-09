@@ -1,20 +1,65 @@
 import pandas as pd
+from typing import List, Optional
 
-def import_nfl_data_py_pbp_parquet(seasons: list[int]) -> pd.DataFrame:
+class NFLDataLoader:
     """
-    Function:
-    -Takes a list of seasons, imports each local parquet file by season,
-    and concatenates the data in a single Pandas DataFrame.
+    Class:
+    -Loader for local NFL parquet data sourced from nfl_data_py. 
+    Centralizes importing and concatenatin season-level files.
+    -Uses the "walrus operator ( := ) " to verify the dataframe expected
+    at a particular path "is not None" in a single line; requires Python 3.8+.
 
-    Parameters:
-    <seasons> (list of int): NFL seasons to import.
-
-    Returns:
-    <hist_off_rating_df> (DataFrame): Data for all requested seasons.
+    Example:
+        >>> loader = NFLDataLoader()
+        >>> pbp_df = loader.pbp([2021, 2022])
     """
-    for season in seasons:
+    def __init__(self, base_path: str = "data_nfl_data_py_parquets"):
+        """
+        Function:
+        -Initialize with root data directory.
+        """
+        self.base_path = base_path
+
+    def _load_season(self, season: int, subdir: str, filename: str) -> Optional[pd.DataFrame]:
+        """
+        Function
+        -Load a single parquet file.
+        """
+        path = f"{self.base_path}/{subdir}/{filename}_{season}.parquet"
         try:
-            season_df = pd.read_parquet(f'nfl_data_py_parquet/nfl_pbp_data/nfl_pbp_data_{season}.parquet')
-        except SyntaxError as e:
-            print(f"No parquet file was found at the path for the requested season {season}.")
-        season_df
+            return pd.read_parquet(path)
+        except Exception:
+            print(f"File not found: {path}")
+            return None
+        
+    def _load_seasons(self, seasons: List[int], subdir: str, filename: str) -> Optional[pd.DataFrame]:
+        """
+        Function
+        -Load and concatenate parquet files.
+        """
+        dfs = [
+            df for season in seasons if (df := self._load_season(season, subdir, filename)) is not None
+        ]
+        return pd.concat(dfs, axis=0) if dfs else None
+    
+    def pbp(self, seasons: List[int]) -> Optional[pd.DataFrame]:
+        """
+        Function
+        -Load play-by-play data.
+        """
+        return self._load_seasons(seasons, "nfl_pbp_data", "nfl_pbp_data")
+    
+    def schedule(self, seasons: List[int]) -> Optional[pd.DataFrame]:
+        """
+        Function
+        -Load schedule data.
+        """
+        return self._load_seasons(seasons, "nfl_schedules", "nfl_schedule")
+    
+    def weekly(self, seasons: List[int]) -> Optional[pd.DataFrame]:
+        """
+        Function
+        -Load weekly data.
+        """
+        return self._load_seasons(seasons, "nfl_weekly_data", "nfl_weekly_data")
+

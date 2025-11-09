@@ -15,7 +15,7 @@ def store_nfl_data_py_schedule_parquet(seasons: list[int]) -> None:
     df = nfl.import_schedules(seasons)
     for season in seasons:
         season_df = df[df['season']==season].copy()
-        season_df.to_parquet(f'nfl_data_py_parquet/nfl_schedules/nfl_schedule_{season}.parquet')
+        season_df.to_parquet(f'data_nfl_data_py_parquets/nfl_schedules/nfl_schedule_{season}.parquet')
     
     return None
 
@@ -34,7 +34,7 @@ def store_nfl_data_py_pbp_data_parquet(seasons: list[int]) -> None:
     df = nfl.import_pbp_data(seasons)
     for season in seasons:
         season_df = df[df['season']==season].copy()
-        season_df.to_parquet(f'nfl_data_py_parquet/nfl_pbp_data/nfl_pbp_data_{season}.parquet')
+        season_df.to_parquet(f'data_nfl_data_py_parquets/nfl_pbp_data/nfl_pbp_data_{season}.parquet')
     
     return None
 
@@ -53,7 +53,7 @@ def store_nfl_data_py_weekly_data_parquet(seasons: list[int]) -> None:
     df = nfl.import_weekly_data(seasons)
     for season in seasons:
         season_df = df[df['season']==season].copy()
-        season_df.to_parquet(f'nfl_data_py_parquet/nfl_weekly_data/nfl_weekly_data_{season}.parquet')
+        season_df.to_parquet(f'data_nfl_data_py_parquets/nfl_weekly_data/nfl_weekly_data_{season}.parquet')
     
     return None
 
