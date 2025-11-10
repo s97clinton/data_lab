@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-def plot_histogram(df: pd.DataFrame, column: str, column_name: str, bins: int = 50, output_path: str = None, show: bool = True) -> None:
+def plot_histogram(df: pd.DataFrame, column: str, column_name: str, bins: int = 50, omit_zero_line: bool = True, output_path: str = None, show: bool = True) -> None:
     """
     Function:
     - Visualizes the distribution of a numerical column using a histogram with zero, mean, and median lines.
@@ -28,7 +28,8 @@ def plot_histogram(df: pd.DataFrame, column: str, column_name: str, bins: int = 
         ax.set_xlabel(column)
         ax.set_ylabel('Frequency')
         ax.set_title(f'{column_name} Distribution', fontweight='bold')
-        ax.axvline(0, color='blue', linestyle='--', label='Zero Line')
+        if not omit_zero_line:
+            ax.axvline(0, color='blue', linestyle='--', label='Zero Line')
         ax.axvline(column_data.mean(), color='red', linestyle='--', label=f'Mean: {column_data.mean():.2f}')
         ax.axvline(column_data.median(), color='green', linestyle='--', label=f'Median: {column_data.median():.2f}')
         ax.legend(fontsize=8)
