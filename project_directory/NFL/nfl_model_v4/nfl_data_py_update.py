@@ -1,4 +1,4 @@
-from functions.import_store_nfl_data import store_nfl_data_py_schedule_parquet, store_nfl_data_py_pbp_data_parquet, store_nfl_data_py_weekly_data_parquet
+from functions.acquire_store_nfl_data_py import NFLDataPyAcquireStore
 
 def run_nfl_data_py_update(seasons: list[int], weekly: bool=False) -> None:
     """
@@ -11,11 +11,13 @@ def run_nfl_data_py_update(seasons: list[int], weekly: bool=False) -> None:
     Returns:
     None, stores data in parquet files.
     """
-    store_nfl_data_py_schedule_parquet(seasons)
-    store_nfl_data_py_pbp_data_parquet(seasons)
+    store = NFLDataPyAcquireStore()
+    store.schedule(seasons)
+    store.pbp(seasons)
     if weekly:
-        store_nfl_data_py_weekly_data_parquet(seasons)
+        store.weekly(seasons)
     return None
 
 if __name__ == "__main__":
-    run_nfl_data_py_update([2025])
+    run_nfl_data_py_update([2025], False)
+

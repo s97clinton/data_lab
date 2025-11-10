@@ -1,5 +1,5 @@
 import pandas as pd
-from typing import List, Optional
+from typing import Optional
 
 class NFLDataLoader:
     """
@@ -32,7 +32,7 @@ class NFLDataLoader:
             print(f"File not found: {path}")
             return None
         
-    def _load_seasons(self, seasons: List[int], subdir: str, filename: str) -> Optional[pd.DataFrame]:
+    def _load_seasons(self, seasons: list[int], subdir: str, filename: str) -> Optional[pd.DataFrame]:
         """
         Function
         -Load and concatenate parquet files.
@@ -42,21 +42,21 @@ class NFLDataLoader:
         ]
         return pd.concat(dfs, axis=0) if dfs else None
     
-    def pbp(self, seasons: List[int]) -> Optional[pd.DataFrame]:
+    def pbp(self, seasons: list[int]) -> Optional[pd.DataFrame]:
         """
         Function
         -Load play-by-play data.
         """
         return self._load_seasons(seasons, "nfl_pbp_data", "nfl_pbp_data")
     
-    def schedule(self, seasons: List[int]) -> Optional[pd.DataFrame]:
+    def schedule(self, seasons: list[int]) -> Optional[pd.DataFrame]:
         """
         Function
         -Load schedule data.
         """
         return self._load_seasons(seasons, "nfl_schedules", "nfl_schedule")
     
-    def weekly(self, seasons: List[int]) -> Optional[pd.DataFrame]:
+    def weekly(self, seasons: list[int]) -> Optional[pd.DataFrame]:
         """
         Function
         -Load weekly data.
