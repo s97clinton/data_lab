@@ -424,15 +424,26 @@ def nfl_data_py_weekly_transform_import(df: pd.DataFrame) -> pd.DataFrame:
 def prep_schedule_data(df: pd.DataFrame) -> pd.DataFrame:
     """
     Function:
+    -Prepare imported schedule data from nfl_data_py for use; the 'weather' columns in the
+    schedule data are inconsistent, and were dropped in favor of 'weather' data available
+    via the pbp_data, which can be accessed as necessary.
+
+    Parameters:
+    <df> (Pandas DataFrame): DataFrame containing NFL schedule data.
+
+    Returns:
+    <df> (Pandas DataFrame): Updated DataFrame
     """
     df[['away_team', 'home_team']] = df[['away_team', 'home_team']].replace('LA', 'LAR')
     df['neutral_site'] = df['location'] == 'Neutral'
     df.drop(columns=['location'], inplace=True)
+    df.rename(columns={'spread_line':'away_spread'}, inplace=True)
+    df['home_spread'] = df['away_spread'] * (-1)
     df = df[['season', 'week', 'game_id', 'gameday', 'gametime', 'game_type', 'neutral_site', 'stadium_id', 'stadium', 'away_team', 'home_team', 
-             'away_rest', 'home_rest', 'away_moneyline', 'home_moneyline', 'spread_line', 'away_spread_odds', 'home_spread_odds',
-             'total_line', 'under_odds', 'over_odds', 'div_game', 'roof', 'surface',
+             'away_rest', 'home_rest', 'away_moneyline', 'home_moneyline', 'away_spread', 'home_spread', 'away_spread_odds', 'home_spread_odds',
+             'total_line', 'under_odds', 'over_odds', 'div_game', 'roof',
              'away_coach', 'home_coach', 'referee',
-             'away_qb_id', 'home_qb_id', 'away_qb_name', 'home_qb_name', 'temp', 'wind',
+             'away_qb_id', 'home_qb_id', 'away_qb_name', 'home_qb_name',
              'away_score', 'home_score', 'result', 'total', 'overtime']]
     
     return df
@@ -440,6 +451,19 @@ def prep_schedule_data(df: pd.DataFrame) -> pd.DataFrame:
 def convert_schedule_to_test_frame(df: pd.DataFrame, test_split_season: int, test_split_week: int) -> pd.DataFrame:
     """
     Function:
+    -Takes a 'prepared' <df> of NFL schedule data, splits into two copies to establish test sets for both
+    the home and away team on the schedule to project offense vs. defense, then concatenates the
+    two DataFrames to form and return <full_test_df>. The <test_split_week> denotes the final week that will
+    be included in TRAINING set (i.e. (<test_split_season > == 2025) & (<test_split_week> > 9) would make
+    2025, weeks 10 and forward, the TEST set).
+
+    Parameters:
+    <df> (Pandas DataFrame): 'Prepared' NFL schedule DataFrame.
+    <test_split_season> (int): Integer denoting the season to "split" into test set.
+    <test_week_season> (int): Integer denoting the week to "split"; all future weeks will be in test set.
+
+    Returns:
+    <full_test_df> (Pandas DataFrame): DataFrame with all offense/defense matchups for games to project.
     """
     test_df = df[(df['season'] == test_split_season) & (df['week'] > test_split_week)].copy()
     test_df = test_df[['season', 'week', 'game_id', 'gameday', 'gametime', 'neutral_site', 'away_team', 'away_coach', 'away_qb_name', 'away_qb_id', 'home_team', 'home_coach', 'home_qb_name', 'home_qb_id']]
