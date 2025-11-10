@@ -439,12 +439,19 @@ def prep_schedule_data(df: pd.DataFrame) -> pd.DataFrame:
     df.drop(columns=['location'], inplace=True)
     df.rename(columns={'spread_line':'away_spread'}, inplace=True)
     df['home_spread'] = df['away_spread'] * (-1)
+    home_spread_conditions = [df['home_spread'] > (df['away_score'] - df['home_score']), df['home_spread'] == (df['away_score'] - df['home_score'])]
+    home_spread_choices = ['win', 'push']
+    df['home_spread_result'] = np.select(home_spread_conditions, home_spread_choices, default='loss')
+    total_conditions = [df['total_line'] < df['total'], df['total_line'] == df['total']]
+    total_conditions_choices = ['over', 'push']
+    df['total_result'] = np.select(total_conditions, total_conditions_choices, default='under')
     df = df[['season', 'week', 'game_id', 'gameday', 'gametime', 'game_type', 'neutral_site', 'stadium_id', 'stadium', 'away_team', 'home_team', 
              'away_rest', 'home_rest', 'away_moneyline', 'home_moneyline', 'away_spread', 'home_spread', 'away_spread_odds', 'home_spread_odds',
              'total_line', 'under_odds', 'over_odds', 'div_game', 'roof',
              'away_coach', 'home_coach', 'referee',
              'away_qb_id', 'home_qb_id', 'away_qb_name', 'home_qb_name',
-             'away_score', 'home_score', 'result', 'total', 'overtime']]
+             'away_score', 'home_score', 'result', 'total', 'overtime',
+             'home_spread_result', 'total_result']]
     
     return df
 

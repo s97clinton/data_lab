@@ -19,5 +19,5 @@ def run_nfl_data_py_update(seasons: list[int], weekly: bool=False) -> None:
     return None
 
 if __name__ == "__main__":
-    run_nfl_data_py_update([2025], False)
+    run_nfl_data_py_update(list(range(2014, 2018)), True)
 
