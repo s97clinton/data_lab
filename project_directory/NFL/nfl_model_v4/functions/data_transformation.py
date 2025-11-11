@@ -265,17 +265,17 @@ def prep_nfl_data_py_pbp(pbp_df: pd.DataFrame) -> pd.DataFrame:
     <df> (Pandas DataFrame): Cleaned DataFrame of play-by-play data.
     """
     df = pbp_df.copy()
+    df = df.dropna(subset=['posteam', 'defteam', 'drive', 'down'])
     df.rename(columns={'ydstogo': 'distance'}, inplace=True)
     df = update_team_abbreviations(df, 'LA', 'LAR')
     df = set_data_types(df)
-    df = df.dropna(subset=['posteam', 'defteam', 'drive'])
     df = df.sort_values(by=['season', 'week'], ascending=[True, True])
     df = process_penalty_types(df)
     df = calculate_generic_yardline(df, 'posteam', 'drive_start_yard_line')
     df = calculate_generic_yardline(df, 'posteam', 'drive_end_yard_line')
     df = update_column_values(df)
     df = simple_column_creation(df)
-    df = parse_weather_column(df)    
+    df = parse_weather_column(df)
     return df
 
 def filter_and_subset_nfl_data_py_pbp(pbp_df = pd.DataFrame) -> pd.DataFrame:
