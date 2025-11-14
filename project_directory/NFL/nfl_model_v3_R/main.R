@@ -6,7 +6,7 @@ source("functions/calculate_game_stats.R")
 source("functions/build_fantasy_boards.R")
 
 model_start_time <- Sys.time()
-model_params <- set_model_parameters(2025, 10, 11) #run 1-62 for composite schedule
+model_params <- set_model_parameters(2025, 11, 12) #run 1-62 for composite schedule
 source("scripts/import_script.R")
 
 for (game_wk in model_params$projection_weeks) {

@@ -1,3 +1,5 @@
+from __future__ import annotations
+from pathlib import Path
 import pandas as pd
 from typing import Optional
 
@@ -13,12 +15,15 @@ class NFLDataLoader:
         >>> loader = NFLDataLoader()
         >>> pbp_df = loader.pbp([2021, 2022])
     """
-    def __init__(self, base_path: str = "data_nfl_data_py_parquets"):
+    def __init__(self) -> None:
         """
         Function:
         -Initialize with root data directory.
         """
-        self.base_path = base_path
+        current_file = Path(__file__)
+        self.base_path = (current_file.parent.parent.parent
+                          / "nfl_data_py_data"
+                          / "data_nfl_data_py_parquets").resolve()
 
     def _load_season(self, season: int, subdir: str, filename: str) -> Optional[pd.DataFrame]:
         """
