@@ -71,8 +71,9 @@ def nfl_model_v4(future_projection: bool,
     if future_projection:
         drive_train_df = drive_df.copy()
         drive_test_df = convert_schedule_to_test_frame(schedule_df, test_split_season, test_split_week)
-        drive_test_df = drive_test_df.merge(off_rating_df, how = 'left', on = ['season', 'offense'])
-        drive_test_df = drive_test_df.merge(def_rating_df, how = 'left', on = ['season', 'defense'])
+        if import_custom_rating:
+            drive_test_df = drive_test_df.merge(off_rating_df, how = 'left', on = ['season', 'offense'])
+            drive_test_df = drive_test_df.merge(def_rating_df, how = 'left', on = ['season', 'defense'])
         target_in_test_set = False
     else:        
         drive_train_df = drive_df[~((drive_df['season'] == test_split_season) & (drive_df['week'] > test_split_week))].copy()
@@ -102,7 +103,7 @@ if __name__ == "__main__":
     pbp_df, drive_df, game_projection_df = nfl_model_v4(future_projection=True, 
                                                  training_set_seasons=[2023, 2024, 2025], 
                                                  test_split_season=2025,
-                                                 test_split_week=9,
+                                                 test_split_week=10,
                                                  import_weekly_data=False,
                                                  import_custom_rating=True,
                                                  run_on_live_connections=False)
