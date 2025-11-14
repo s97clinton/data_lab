@@ -6,7 +6,7 @@ from typing import Optional
 class NFLDataLoader:
     """
     Class:
-    -Loader for local NFL parquet data sourced from nfl_data_py. 
+    -Loader for local NFL parquet data sourced from nfl_read_py. 
     Centralizes importing and concatenatin season-level files.
 
     Example:
@@ -19,9 +19,9 @@ class NFLDataLoader:
         -Initialize with root data directory.
         """
         current_file = Path(__file__)
-        self.base_path = (current_file.parent.parent.parent
-                          / "nfl_data_py_data"
-                          / "data_nfl_data_py_parquets").resolve()
+        self.base_path = (current_file.parent.parent
+                          / "nfl_readpy_data"
+                          / "data_nfl_read_py_parquets").resolve()
 
     def _load_season(self, season: int, subdir: str, filename: str) -> Optional[pd.DataFrame]:
         """
@@ -59,10 +59,16 @@ class NFLDataLoader:
         """
         return self._load_seasons(seasons, "nfl_schedules", "nfl_schedule")
     
-    def weekly(self, seasons: list[int]) -> Optional[pd.DataFrame]:
+    def player_weekly(self, seasons: list[int]) -> Optional[pd.DataFrame]:
         """
         Function
-        -Load weekly data.
+        -Load weekly player data.
         """
-        return self._load_seasons(seasons, "nfl_weekly_data", "nfl_weekly_data")
-
+        return self._load_seasons(seasons, "nfl_player_weekly_data", "nfl_player_weekly_data")
+    
+    def team_weekly(self, seasons: list[int]) -> Optional[pd.DataFrame]:
+        """
+        Function
+        -Load weekly player data.
+        """
+        return self._load_seasons(seasons, "nfl_team_weekly_data", "nfl_team_weekly_data")
