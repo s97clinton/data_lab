@@ -5,6 +5,8 @@ class NFLReadPyAcquireStore:
     """
     Class
     -Class to acquire NFL data via nflreadpy package and stores in local parquet files.
+    -Note: The 'depth_chart' option only runs up until 2024; nflreadpy changed the
+    formatting significantly for 2025.
 
     Example:
         >>> store = NFLDataPyAcquireStore()
@@ -22,7 +24,8 @@ class NFLReadPyAcquireStore:
             'schedule': (nfl.load_schedules, 'nfl_schedules', 'nfl_schedule'),
             'pbp': (nfl.load_pbp, 'nfl_pbp_data', 'nfl_pbp_data'),
             'player_weekly': (nfl.load_player_stats, 'nfl_player_weekly_data', 'nfl_player_weekly_data'),
-            'team_weekly': (nfl.load_team_stats, 'nfl_team_weekly_data', 'nfl_team_weekly_data')
+            'team_weekly': (nfl.load_team_stats, 'nfl_team_weekly_data', 'nfl_team_weekly_data'),
+            'depth_chart': (nfl.load_depth_charts, 'nfl_depth_charts', 'nfl_depth_charts')
         }
 
     def _ensure_dir(self, path: str) -> None:
@@ -59,5 +62,20 @@ class NFLReadPyAcquireStore:
     def team_weekly(self, seasons: list[int]) -> None:
         """Function: Store weekly team data for given seasons."""
         self._acquire_and_store('team_weekly', seasons)
+    def depth_chart(self, seasons: list[int]) -> None:
+        """Function: Store weekly team data for given seasons."""
+        self._acquire_and_store('depth_chart', seasons)
 
     
+def acquire_updated_depth_chart(seasons: list[int]) -> None:
+    """
+    Function: Acquire nflreadpy's updated depth chart for
+    seasons starting in 2025; all previous seasons should be
+    acquired using the NFLReadPyAcquireStore class.
+    """
+    for season in seasons:
+        pol_depth = nfl.load_depth_charts([season])
+        depth = pol_depth.to_pandas()
+        depth.to_parquet(f"data_nfl_read_py_parquets/nfl_depth_charts_updated_version/depth_chart_updated_version_{season}.parquet")
+        print(f"Saved updated depth chart for season {season}")
+    return None
