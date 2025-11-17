@@ -64,7 +64,9 @@ class NFLDataLoader:
         Function
         -Load weekly player data.
         """
-        return self._load_seasons(seasons, "nfl_player_weekly_data", "nfl_player_weekly_data")
+        df = self._load_seasons(seasons, "nfl_player_weekly_data", "nfl_player_weekly_data")
+        df['sack_yards_lost'] = df['sack_yards_lost'] * -1
+        return df
     
     def team_weekly(self, seasons: list[int]) -> Optional[pd.DataFrame]:
         """
