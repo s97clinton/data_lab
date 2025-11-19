@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-def visualize_correlation_heatmap(df: pd.DataFrame, numerical_features: list, output_path: str = None, show: bool = True) -> None:
+def correlation_heatmap(df: pd.DataFrame, numerical_features: list, output_path: str = None, show: bool = True) -> None:
     """
     Function:
     - Visualizes the correlation matrix of numerical features using a heatmap.
